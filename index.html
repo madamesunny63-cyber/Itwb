@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Jaden Ninja Run</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Écran d'accueil -->
+    <div id="menu">
+
+        <h1>🥷 JADEN</h1>
+        <h2>NINJA RUN</h2>
+
+        <p>Choisis ton ninja</p>
+
+        <div class="skins">
+
+            <button class="skin selected" data-skin="0">
+                <div class="skin-image">🥷</div>
+                <span>Ninja Rouge</span>
+            </button>
+
+            <button class="skin" data-skin="1">
+                <div class="skin-image">🧙</div>
+                <span>Ninja Bleu</span>
+            </button>
+
+            <button class="skin" data-skin="2">
+                <div class="skin-image">👤</div>
+                <span>Ninja Noir</span>
+            </button>
+
+        </div>
+
+        <button id="playButton">JOUER</button>
+
+    </div>
+
+
+    <!-- Jeu -->
+    <div id="game" class="hidden">
+
+        <div class="top-bar">
+            <div>
+                SCORE
+                <strong id="score">0</strong>
+            </div>
+
+            <div>
+                🪙
+                <strong id="coins">0</strong>
+            </div>
+
+            <div>
+                RECORD
+                <strong id="best">0</strong>
+            </div>
+        </div>
+
+
+        <div id="gameArea">
+
+            <div id="player">🥷</div>
+
+            <div id="ground"></div>
+
+        </div>
+
+
+        <!-- Contrôles téléphone -->
+        <div class="controls">
+
+            <button id="jumpButton">
+                ⬆️
+                <span>SAUTER</span>
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- Game Over -->
+    <div id="gameOver" class="hidden">
+
+        <h1>💥 GAME OVER</h1>
+
+        <p>Score</p>
+
+        <strong id="finalScore">0</strong>
+
+        <button id="restartButton">
+            REJOUER
+        </button>
+
+        <button id="menuButton">
+            MENU
+        </button>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>

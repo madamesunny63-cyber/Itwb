@@ -12,99 +12,190 @@
 
 <body>
 
-    <!-- Écran d'accueil -->
-    <div id="menu">
+    <!-- ================= MENU ================= -->
 
-        <h1>🥷 JADEN</h1>
-        <h2>NINJA RUN</h2>
+    <section id="menu" class="screen">
 
-        <p>Choisis ton ninja</p>
-
-        <div class="skins">
-
-            <button class="skin selected" data-skin="0">
-                <div class="skin-image">🥷</div>
-                <span>Ninja Rouge</span>
-            </button>
-
-            <button class="skin" data-skin="1">
-                <div class="skin-image">🧙</div>
-                <span>Ninja Bleu</span>
-            </button>
-
-            <button class="skin" data-skin="2">
-                <div class="skin-image">👤</div>
-                <span>Ninja Noir</span>
-            </button>
-
+        <div class="logo">
+            <span>JADEN</span>
+            <strong>NINJA RUN</strong>
         </div>
 
-        <button id="playButton">JOUER</button>
+        <p class="subtitle">
+            L'aventure commence...
+        </p>
 
-    </div>
+        <div class="skin-selection">
 
+            <h3>CHOISIS TON NINJA</h3>
 
-    <!-- Jeu -->
-    <div id="game" class="hidden">
+            <div class="skin-list">
 
-        <div class="top-bar">
-            <div>
-                SCORE
-                <strong id="score">0</strong>
+                <button class="skin selected" data-skin="0">
+                    <div class="skin-character">🥷</div>
+                    <span>Ninja</span>
+                </button>
+
+                <button class="skin" data-skin="1">
+                    <div class="skin-character">🧙</div>
+                    <span>Ombre</span>
+                </button>
+
+                <button class="skin" data-skin="2">
+                    <div class="skin-character">🤖</div>
+                    <span>Cyber</span>
+                </button>
+
             </div>
 
-            <div>
-                🪙
-                <strong id="coins">0</strong>
-            </div>
-
-            <div>
-                RECORD
-                <strong id="best">0</strong>
-            </div>
         </div>
 
-
-        <div id="gameArea">
-
-            <div id="player">🥷</div>
-
-            <div id="ground"></div>
-
-        </div>
-
-
-        <!-- Contrôles téléphone -->
-        <div class="controls">
-
-            <button id="jumpButton">
-                ⬆️
-                <span>SAUTER</span>
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- Game Over -->
-    <div id="gameOver" class="hidden">
-
-        <h1>💥 GAME OVER</h1>
-
-        <p>Score</p>
-
-        <strong id="finalScore">0</strong>
-
-        <button id="restartButton">
-            REJOUER
+        <button id="playButton" class="main-button">
+            JOUER
         </button>
 
-        <button id="menuButton">
+    </section>
+
+
+    <!-- ================= JEU ================= -->
+
+    <section id="game" class="hidden">
+
+        <div id="hud">
+
+            <div class="hud-item">
+                <small>SCORE</small>
+                <strong id="score">00000</strong>
+            </div>
+
+            <div class="hud-item coins-hud">
+                🪙 <strong id="coins">0</strong>
+            </div>
+
+            <div class="hud-item">
+                ❤️ <strong id="lives">3</strong>
+            </div>
+
+            <button id="pauseButton">
+                II
+            </button>
+
+        </div>
+
+
+        <div id="gameWorld">
+
+            <div id="sky"></div>
+
+            <div id="clouds"></div>
+
+            <div id="farMountains"></div>
+
+            <div id="trees"></div>
+
+            <div id="level">
+
+                <div id="player">
+                    🥷
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Contrôles tactiles -->
+
+        <div id="controls">
+
+            <button id="leftButton">
+                ◀
+            </button>
+
+            <button id="jumpButton">
+                ▲
+            </button>
+
+            <button id="rightButton">
+                ▶
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= PAUSE ================= -->
+
+    <section id="pauseScreen" class="screen hidden">
+
+        <h1>PAUSE</h1>
+
+        <button id="resumeButton" class="main-button">
+            REPRENDRE
+        </button>
+
+        <button id="pauseMenuButton" class="secondary-button">
             MENU
         </button>
 
-    </div>
+    </section>
+
+
+    <!-- ================= GAME OVER ================= -->
+
+    <section id="gameOver" class="screen hidden">
+
+        <div class="gameover-title">
+            GAME OVER
+        </div>
+
+        <p>SCORE</p>
+
+        <strong id="finalScore">
+            0
+        </strong>
+
+        <p id="newRecord">
+            ⭐
+        </p>
+
+        <button id="restartButton" class="main-button">
+            REJOUER
+        </button>
+
+        <button id="menuButton" class="secondary-button">
+            MENU
+        </button>
+
+    </section>
+
+
+    <!-- ================= VICTOIRE ================= -->
+
+    <section id="victory" class="screen hidden">
+
+        <div class="victory-title">
+            NIVEAU TERMINÉ !
+        </div>
+
+        <div class="victory-character">
+            🥷
+        </div>
+
+        <p>
+            Jaden a atteint la fin !
+        </p>
+
+        <strong id="victoryScore">
+            0
+        </strong>
+
+        <button id="nextLevelButton" class="main-button">
+            NIVEAU SUIVANT
+        </button>
+
+    </section>
 
 
     <script src="script.js"></script>

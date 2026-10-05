@@ -1,130 +1,349 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jaden Ninja Run</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jaden Ninja Run</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- MENU -->
-  <div id="menu">
-    <h1>JADEN NINJA RUN</h1>
-    <p>Choisis ton ninja</p>
+    <!-- =========================
+         MENU PRINCIPAL
+    ========================== -->
 
-    <div class="skins">
-      <button class="skin selected" data-skin="0">
-        <img src="images/skin1.png" alt="Skin 1">
-        <span>Ninja</span>
-      </button>
+    <section id="menu">
 
-      <button class="skin" data-skin="1">
-        <img src="images/skin2.png" alt="Skin 2">
-        <span>Shadow</span>
-      </button>
-
-      <button class="skin" data-skin="2">
-        <img src="images/skin3.png" alt="Skin 3">
-        <span>Flamme</span>
-      </button>
-    </div>
-
-    <button id="start">JOUER</button>
-  </div>
-
-
-  <!-- JEU -->
-  <div id="game">
-
-    <div id="hud">
-      <span>⭐ <b id="score">0</b></span>
-      <span>❤️ <b id="lives">3</b></span>
-      <span>🏆 <b id="best">0</b></span>
-    </div>
-
-    <div id="gameArea">
-
-      <div id="sky"></div>
-
-      <div class="cloud cloud1"></div>
-      <div class="cloud cloud2"></div>
-
-      <div id="world">
-
-        <div id="ground"></div>
-
-        <!-- Obstacles -->
-        <div class="obstacle" style="left:700px"></div>
-        <div class="obstacle" style="left:1250px"></div>
-        <div class="obstacle" style="left:1300px"></div>
-        <div class="obstacle" style="left:2000px"></div>
-        <div class="obstacle" style="left:3100px"></div>
-        <div class="obstacle" style="left:4200px"></div>
-
-        <!-- Ennemis -->
-        <div class="enemy" style="left:1000px"></div>
-        <div class="enemy" style="left:1800px"></div>
-        <div class="enemy" style="left:2700px"></div>
-        <div class="enemy" style="left:3900px"></div>
-        <div class="enemy" style="left:4800px"></div>
-
-        <!-- Plateformes -->
-        <div class="platform" style="left:500px; top:180px"></div>
-        <div class="platform" style="left:1500px; top:170px"></div>
-        <div class="platform" style="left:2300px; top:190px"></div>
-        <div class="platform" style="left:3400px; top:170px"></div>
-        <div class="platform" style="left:4500px; top:190px"></div>
-
-        <!-- Pièces -->
-        <div class="coin" style="left:520px; top:140px"></div>
-        <div class="coin" style="left:560px; top:110px"></div>
-        <div class="coin" style="left:600px; top:140px"></div>
-
-        <div class="coin" style="left:1500px; top:130px"></div>
-        <div class="coin" style="left:1550px; top:100px"></div>
-        <div class="coin" style="left:1600px; top:130px"></div>
-
-        <div class="coin" style="left:2300px; top:150px"></div>
-        <div class="coin" style="left:2350px; top:115px"></div>
-        <div class="coin" style="left:2400px; top:150px"></div>
-
-        <div class="coin" style="left:3400px; top:130px"></div>
-        <div class="coin" style="left:3450px; top:95px"></div>
-        <div class="coin" style="left:3500px; top:130px"></div>
-
-        <!-- Arrivée -->
-        <div id="finish"></div>
-
-      </div>
-
-      <!-- Jaden -->
-      <div id="player">
-        <img id="playerImage" src="images/skin1.png" alt="Jaden">
-      </div>
-
-      <!-- Game Over -->
-      <div id="gameOver">
-        <div class="gameOverBox">
-          <h2 id="gameOverTitle">GAME OVER</h2>
-          <p>Score : <span id="finalScore">0</span></p>
-          <button id="restart">REJOUER</button>
+        <div class="logo">
+            <span>JADEN</span>
+            <small>NINJA RUN</small>
         </div>
-      </div>
 
-    </div>
+        <p class="subtitle">
+            Choisis ton ninja
+        </p>
 
-    <!-- Contrôles téléphone -->
-    <div id="controls">
-      <button id="left">◀</button>
-      <button id="jump">SAUT</button>
-      <button id="right">▶</button>
-    </div>
+        <div class="skins">
 
-  </div>
+            <button class="skin selected" data-skin="ninja">
+                <div class="skin-preview ninja-preview">
+                    <div class="ninja-head"></div>
+                    <div class="ninja-body"></div>
+                    <div class="ninja-leg left"></div>
+                    <div class="ninja-leg right"></div>
+                </div>
 
-  <script src="script.js"></script>
+                <strong>NINJA</strong>
+            </button>
+
+
+            <button class="skin" data-skin="shadow">
+                <div class="skin-preview shadow-preview">
+                    <div class="ninja-head"></div>
+                    <div class="ninja-body"></div>
+                    <div class="ninja-leg left"></div>
+                    <div class="ninja-leg right"></div>
+                </div>
+
+                <strong>SHADOW</strong>
+            </button>
+
+
+            <button class="skin" data-skin="fire">
+                <div class="skin-preview fire-preview">
+                    <div class="ninja-head"></div>
+                    <div class="ninja-body"></div>
+                    <div class="ninja-leg left"></div>
+                    <div class="ninja-leg right"></div>
+                </div>
+
+                <strong>FIRE</strong>
+            </button>
+
+        </div>
+
+        <button id="startButton">
+            JOUER
+        </button>
+
+    </section>
+
+
+    <!-- =========================
+         JEU
+    ========================== -->
+
+    <section id="game">
+
+        <!-- HUD -->
+
+        <div id="hud">
+
+            <div>
+                ⭐ <span id="score">0</span>
+            </div>
+
+            <div>
+                ❤️ <span id="lives">3</span>
+            </div>
+
+            <div>
+                🪙 <span id="coins">0</span>
+            </div>
+
+        </div>
+
+
+        <!-- ZONE DE JEU -->
+
+        <div id="gameArea">
+
+            <!-- CIEL -->
+
+            <div class="sky">
+
+                <div class="cloud cloud1"></div>
+                <div class="cloud cloud2"></div>
+                <div class="cloud cloud3"></div>
+
+                <div class="mountain mountain1"></div>
+                <div class="mountain mountain2"></div>
+
+            </div>
+
+
+            <!-- MONDE QUI DEFILE -->
+
+            <div id="world">
+
+                <!-- SOL -->
+
+                <div id="ground"></div>
+
+
+                <!-- PLATEFORMES -->
+
+                <div
+                    class="platform"
+                    style="left: 520px; top: 185px;">
+                </div>
+
+                <div
+                    class="platform"
+                    style="left: 1150px; top: 155px;">
+                </div>
+
+                <div
+                    class="platform"
+                    style="left: 1900px; top: 185px;">
+                </div>
+
+                <div
+                    class="platform"
+                    style="left: 2650px; top: 145px;">
+                </div>
+
+                <div
+                    class="platform"
+                    style="left: 3400px; top: 180px;">
+                </div>
+
+
+                <!-- OBSTACLES -->
+
+                <div
+                    class="obstacle rock"
+                    style="left: 750px;">
+                </div>
+
+                <div
+                    class="obstacle rock"
+                    style="left: 1250px;">
+                </div>
+
+                <div
+                    class="obstacle rock"
+                    style="left: 1300px;">
+                </div>
+
+                <div
+                    class="obstacle rock"
+                    style="left: 2050px;">
+                </div>
+
+                <div
+                    class="obstacle rock"
+                    style="left: 2900px;">
+                </div>
+
+                <div
+                    class="obstacle rock"
+                    style="left: 3600px;">
+                </div>
+
+
+                <!-- ENNEMIS -->
+
+                <div
+                    class="enemy"
+                    style="left: 950px;">
+                    👾
+                </div>
+
+                <div
+                    class="enemy"
+                    style="left: 1550px;">
+                    👾
+                </div>
+
+                <div
+                    class="enemy"
+                    style="left: 2300px;">
+                    👾
+                </div>
+
+                <div
+                    class="enemy"
+                    style="left: 3100px;">
+                    👾
+                </div>
+
+                <div
+                    class="enemy"
+                    style="left: 3900px;">
+                    👾
+                </div>
+
+
+                <!-- PIÈCES -->
+
+                <div class="coin" style="left: 530px; top: 145px;"></div>
+                <div class="coin" style="left: 570px; top: 115px;"></div>
+                <div class="coin" style="left: 610px; top: 145px;"></div>
+
+                <div class="coin" style="left: 1000px; top: 180px;"></div>
+
+                <div class="coin" style="left: 1160px; top: 115px;"></div>
+                <div class="coin" style="left: 1200px; top: 85px;"></div>
+                <div class="coin" style="left: 1240px; top: 115px;"></div>
+
+                <div class="coin" style="left: 1650px; top: 180px;"></div>
+
+                <div class="coin" style="left: 1910px; top: 145px;"></div>
+                <div class="coin" style="left: 1950px; top: 115px;"></div>
+                <div class="coin" style="left: 1990px; top: 145px;"></div>
+
+                <div class="coin" style="left: 2450px; top: 180px;"></div>
+
+                <div class="coin" style="left: 2660px; top: 105px;"></div>
+                <div class="coin" style="left: 2700px; top: 75px;"></div>
+                <div class="coin" style="left: 2740px; top: 105px;"></div>
+
+                <div class="coin" style="left: 3250px; top: 180px;"></div>
+
+                <div class="coin" style="left: 3410px; top: 140px;"></div>
+                <div class="coin" style="left: 3450px; top: 110px;"></div>
+                <div class="coin" style="left: 3490px; top: 140px;"></div>
+
+
+                <!-- ARRIVÉE -->
+
+                <div id="finish">
+
+                    <div class="flag"></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- JOUEUR -->
+
+            <div id="player">
+
+                <div class="player-scarf"></div>
+
+                <div class="player-head">
+                    <div class="eye left"></div>
+                    <div class="eye right"></div>
+                </div>
+
+                <div class="player-body"></div>
+
+                <div class="player-arm left"></div>
+                <div class="player-arm right"></div>
+
+                <div class="player-leg left"></div>
+                <div class="player-leg right"></div>
+
+            </div>
+
+
+            <!-- MESSAGE FIN -->
+
+            <div id="gameOver">
+
+                <div class="gameOverBox">
+
+                    <h2 id="gameOverTitle">
+                        GAME OVER
+                    </h2>
+
+                    <p>
+                        Score :
+                        <strong id="finalScore">0</strong>
+                    </p>
+
+                    <button id="restartButton">
+                        REJOUER
+                    </button>
+
+                    <button id="menuButton">
+                        MENU
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMMANDES -->
+
+        <div id="controls">
+
+            <button
+                id="leftButton"
+                class="control">
+                ◀
+            </button>
+
+            <button
+                id="jumpButton"
+                class="control jump">
+                SAUT
+            </button>
+
+            <button
+                id="rightButton"
+                class="control">
+                ▶
+            </button>
+
+        </div>
+
+        <p class="help">
+            Appuie sur SAUT pour éviter les obstacles
+        </p>
+
+    </section>
+
+
+    <script src="script.js"></script>
 
 </body>
 </html>

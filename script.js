@@ -1,1005 +1,652 @@
-"use strict";
+document.addEventListener("DOMContentLoaded", function () {
+
+    const menu = document.getElementById("menu");
+    const game = document.getElementById("game");
+
+    const startButton = document.getElementById("startButton");
+    const restartButton = document.getElementById("restartButton");
+    const menuButton = document.getElementById("menuButton");
+
+    const gameOver = document.getElementById("gameOver");
+
+    const player = document.getElementById("player");
+    const world = document.getElementById("world");
+
+    const scoreElement = document.getElementById("score");
+    const livesElement = document.getElementById("lives");
+    const coinsElement = document.getElementById("coins");
+
+    const finalScoreElement =
+        document.getElementById("finalScore");
+
+    const gameOverTitle =
+        document.getElementById("gameOverTitle");
+
+    const jumpButton =
+        document.getElementById("jumpButton");
+
+    const leftButton =
+        document.getElementById("leftButton");
+
+    const rightButton =
+        document.getElementById("rightButton");
 
 
-/* =========================
-   ELEMENTS
-========================= */
+    /* =========================
+       VARIABLES
+    ========================= */
 
-const menu = document.getElementById("menu");
+    let playing = false;
 
-const game = document.getElementById("game");
+    let score = 0;
+    let coins = 0;
+    let lives = 3;
 
-const startButton =
-    document.getElementById("startButton");
+    let playerY = 0;
+    let velocityY = 0;
 
-const restartButton =
-    document.getElementById("restartButton");
+    let worldX = 0;
 
-const menuButton =
-    document.getElementById("menuButton");
+    let lastTime = 0;
+    let animation = null;
 
-const gameArea =
-    document.getElementById("gameArea");
+    let invincible = false;
 
-const world =
-    document.getElementById("world");
-
-const player =
-    document.getElementById("player");
-
-const scoreElement =
-    document.getElementById("score");
-
-const livesElement =
-    document.getElementById("lives");
-
-const coinsElement =
-    document.getElementById("coins");
-
-const finalScoreElement =
-    document.getElementById("finalScore");
-
-const gameOver =
-    document.getElementById("gameOver");
-
-const gameOverTitle =
-    document.getElementById("gameOverTitle");
-
-const jumpButton =
-    document.getElementById("jumpButton");
-
-const leftButton =
-    document.getElementById("leftButton");
-
-const rightButton =
-    document.getElementById("rightButton");
+    const gravity = 0.55;
+    const jumpPower = 11;
+    const speed = 3.5;
 
 
-/* =========================
-   VARIABLES
-========================= */
+    /* =========================
+       SKINS
+    ========================= */
 
-let selectedSkin = "ninja";
+    const skinButtons =
+        document.querySelectorAll(".skin");
 
-let running = false;
+    skinButtons.forEach(function (button) {
 
-let animationFrame = 0;
+        button.addEventListener("click", function () {
 
-let previousTime = 0;
-
-
-/*
-    Position verticale du joueur.
-    0 = sol.
-*/
-
-let playerY = 0;
-
-let velocityY = 0;
-
-
-/*
-    Position du monde.
-    Plus la valeur est négative,
-    plus le niveau défile vers la gauche.
-*/
-
-let worldX = 0;
-
-
-/*
-    Vitesse du niveau.
-*/
-
-let speed = 3.5;
-
-
-/*
-    Score.
-*/
-
-let score = 0;
-
-let coins = 0;
-
-let lives = 3;
-
-
-/*
-    Empêche de perdre plusieurs vies
-    immédiatement.
-*/
-
-let invincible = false;
-
-
-/* =========================
-   CONSTANTES
-========================= */
-
-const GRAVITY = 0.58;
-
-const JUMP_FORCE = 11.5;
-
-const PLAYER_X = 110;
-
-const GROUND_PERCENT = 37;
-
-
-/* =========================
-   SKINS
-========================= */
-
-document
-    .querySelectorAll(".skin")
-    .forEach(button => {
-
-        button.addEventListener("click", () => {
-
-            document
-                .querySelectorAll(".skin")
-                .forEach(item => {
-
-                    item.classList.remove("selected");
-
-                });
-
+            skinButtons.forEach(function (item) {
+                item.classList.remove("selected");
+            });
 
             button.classList.add("selected");
 
+            const skin = button.dataset.skin;
 
-            selectedSkin =
-                button.dataset.skin;
-
-
-            applySkin();
-
+            changeSkin(skin);
         });
+    });
+
+
+    function changeSkin(skin) {
+
+        const body =
+            document.querySelector(".player-body");
+
+        const head =
+            document.querySelector(".player-head");
+
+        const scarf =
+            document.querySelector(".player-scarf");
+
+
+        if (!body || !head || !scarf) {
+            return;
+        }
+
+
+        if (skin === "ninja") {
+
+            body.style.background = "#28365d";
+            head.style.background = "#d69a70";
+            scarf.style.background = "#e24e4e";
+
+        }
+
+
+        if (skin === "shadow") {
+
+            body.style.background = "#1b2030";
+            head.style.background = "#888b96";
+            scarf.style.background = "#713e80";
+
+        }
+
+
+        if (skin === "fire") {
+
+            body.style.background = "#b7442e";
+            head.style.background = "#d69a70";
+            scarf.style.background = "#ffb52e";
+
+        }
+    }
+
+
+    /* =========================
+       DÉMARRER LE JEU
+    ========================= */
+
+    startButton.addEventListener("click", function () {
+
+        startGame();
 
     });
 
 
-function applySkin() {
+    function startGame() {
 
-    const body =
-        document.querySelector(".player-body");
+        console.log("JADEN NINJA RUN : démarrage");
 
-    const head =
-        document.querySelector(".player-head");
+        menu.style.display = "none";
 
-    const scarf =
-        document.querySelector(".player-scarf");
+        game.style.display = "block";
 
+        gameOver.style.display = "none";
 
-    if (selectedSkin === "ninja") {
 
-        body.style.background = "#28365d";
-
-        head.style.background = "#d69a70";
-
-        scarf.style.background = "#e24e4e";
-
-    }
-
-
-    if (selectedSkin === "shadow") {
-
-        body.style.background = "#1b2030";
-
-        head.style.background = "#8d909c";
-
-        scarf.style.background = "#713e80";
-
-    }
-
-
-    if (selectedSkin === "fire") {
-
-        body.style.background = "#b7442e";
-
-        head.style.background = "#d69a70";
-
-        scarf.style.background = "#ffb52e";
-
-    }
-
-}
-
-
-/* =========================
-   MENU -> JEU
-========================= */
-
-startButton.addEventListener(
-    "click",
-    startGame
-);
-
-
-restartButton.addEventListener(
-    "click",
-    startGame
-);
-
-
-menuButton.addEventListener(
-    "click",
-    returnToMenu
-);
-
-
-function startGame() {
-
-    menu.style.display = "none";
-
-    game.style.display = "block";
-
-    gameOver.style.display = "none";
-
-
-    /*
-        Réinitialisation.
-    */
-
-    playerY = 0;
-
-    velocityY = 0;
-
-    worldX = 0;
-
-    speed = 3.5;
-
-    score = 0;
-
-    coins = 0;
-
-    lives = 3;
-
-    invincible = false;
-
-
-    /*
-        Remet les objets du niveau.
-    */
-
-    resetObjects();
-
-
-    /*
-        HUD.
-    */
-
-    updateHUD();
-
-
-    /*
-        Position initiale.
-    */
-
-    player.style.left =
-        PLAYER_X + "px";
-
-    updatePlayerPosition();
-
-
-    world.style.transform =
-        "translate3d(0, 0, 0)";
-
-
-    applySkin();
-
-
-    running = true;
-
-    previousTime =
-        performance.now();
-
-
-    cancelAnimationFrame(
-        animationFrame
-    );
-
-
-    animationFrame =
-        requestAnimationFrame(gameLoop);
-
-}
-
-
-/* =========================
-   RETOUR MENU
-========================= */
-
-function returnToMenu() {
-
-    running = false;
-
-    cancelAnimationFrame(
-        animationFrame
-    );
-
-    game.style.display = "none";
-
-    gameOver.style.display = "none";
-
-    menu.style.display = "block";
-
-}
-
-
-/* =========================
-   RESET OBJETS
-========================= */
-
-function resetObjects() {
-
-    document
-        .querySelectorAll(".coin")
-        .forEach(coin => {
-
-            coin.style.display = "block";
-
-            delete coin.dataset.collected;
-
-        });
-
-
-    document
-        .querySelectorAll(".obstacle, .enemy")
-        .forEach(object => {
-
-            object.style.display = "block";
-
-            delete object.dataset.hit;
-
-        });
-
-}
-
-
-/* =========================
-   SAUT
-========================= */
-
-function jump() {
-
-    if (!running) {
-        return;
-    }
-
-
-    /*
-        Le joueur doit être au sol.
-    */
-
-    if (playerY <= 0.5) {
-
-        playerY = 1;
-
-        velocityY =
-            JUMP_FORCE;
-
-    }
-
-}
-
-
-/* =========================
-   DÉPLACEMENT
-========================= */
-
-function moveLeft() {
-
-    if (!running) {
-        return;
-    }
-
-
-    /*
-        Ces boutons modifient légèrement
-        la position du ninja.
-    */
-
-    const current =
-        parseFloat(
-            player.style.left
-        ) || PLAYER_X;
-
-
-    const next =
-        Math.max(
-            65,
-            current - 35
-        );
-
-
-    player.style.left =
-        next + "px";
-
-}
-
-
-function moveRight() {
-
-    if (!running) {
-        return;
-    }
-
-
-    const current =
-        parseFloat(
-            player.style.left
-        ) || PLAYER_X;
-
-
-    const next =
-        Math.min(
-            180,
-            current + 35
-        );
-
-
-    player.style.left =
-        next + "px";
-
-}
-
-
-/* =========================
-   COMMANDES TACTILES
-========================= */
-
-jumpButton.addEventListener(
-    "pointerdown",
-    event => {
-
-        event.preventDefault();
-
-        jump();
-
-    }
-);
-
-
-leftButton.addEventListener(
-    "pointerdown",
-    event => {
-
-        event.preventDefault();
-
-        moveLeft();
-
-    }
-);
-
-
-rightButton.addEventListener(
-    "pointerdown",
-    event => {
-
-        event.preventDefault();
-
-        moveRight();
-
-    }
-);
-
-
-/* =========================
-   CLAVIER
-========================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.code === "Space" ||
-            event.code === "ArrowUp"
-        ) {
-
-            event.preventDefault();
-
-            jump();
-
-        }
-
-
-        if (
-            event.code === "ArrowLeft"
-        ) {
-
-            moveLeft();
-
-        }
-
-
-        if (
-            event.code === "ArrowRight"
-        ) {
-
-            moveRight();
-
-        }
-
-    }
-);
-
-
-/* =========================
-   BOUCLE PRINCIPALE
-========================= */
-
-function gameLoop(currentTime) {
-
-    if (!running) {
-        return;
-    }
-
-
-    /*
-        Temps écoulé.
-    */
-
-    const delta =
-        Math.min(
-            2,
-            (currentTime - previousTime) /
-            16.67
-        );
-
-
-    previousTime =
-        currentTime;
-
-
-    /* =====================
-       GRAVITÉ
-    ===================== */
-
-    velocityY -=
-        GRAVITY * delta;
-
-
-    playerY +=
-        velocityY * delta;
-
-
-    /*
-        Sol.
-    */
-
-    if (playerY < 0) {
+        score = 0;
+        coins = 0;
+        lives = 3;
 
         playerY = 0;
-
         velocityY = 0;
 
-    }
-
-
-    updatePlayerPosition();
-
-
-    /* =====================
-       DÉFILEMENT
-    ===================== */
-
-    worldX -=
-        speed * delta;
-
-
-    world.style.transform =
-        `translate3d(${worldX}px, 0, 0)`;
-
-
-    /* =====================
-       COLLISIONS
-    ===================== */
-
-    checkCoins();
-
-    checkDanger();
-
-    checkFinish();
-
-
-    /* =====================
-       SCORE
-    ===================== */
-
-    score +=
-        speed * delta * 0.08;
-
-
-    /*
-        Augmente doucement la difficulté.
-    */
-
-    speed =
-        Math.min(
-            7,
-            3.5 + score / 1000
-        );
-
-
-    updateHUD();
-
-
-    animationFrame =
-        requestAnimationFrame(
-            gameLoop
-        );
-
-}
-
-
-/* =========================
-   POSITION JOUEUR
-========================= */
-
-function updatePlayerPosition() {
-
-    player.style.bottom =
-        `calc(${GROUND_PERCENT}% + ${playerY}px)`;
-
-}
-
-
-/* =========================
-   RECTANGLE DU JOUEUR
-========================= */
-
-function getPlayerRect() {
-
-    const areaRect =
-        gameArea.getBoundingClientRect();
-
-
-    const playerRect =
-        player.getBoundingClientRect();
-
-
-    return {
-
-        left:
-            playerRect.left -
-            areaRect.left,
-
-        right:
-            playerRect.right -
-            areaRect.left,
-
-        top:
-            playerRect.top -
-            areaRect.top,
-
-        bottom:
-            playerRect.bottom -
-            areaRect.top,
-
-        width:
-            playerRect.width,
-
-        height:
-            playerRect.height
-
-    };
-
-}
-
-
-/* =========================
-   RECTANGLE OBJET
-========================= */
-
-function getObjectRect(object) {
-
-    const areaRect =
-        gameArea.getBoundingClientRect();
-
-
-    const rect =
-        object.getBoundingClientRect();
-
-
-    return {
-
-        left:
-            rect.left -
-            areaRect.left,
-
-        right:
-            rect.right -
-            areaRect.left,
-
-        top:
-            rect.top -
-            areaRect.top,
-
-        bottom:
-            rect.bottom -
-            areaRect.top,
-
-        width:
-            rect.width,
-
-        height:
-            rect.height
-
-    };
-
-}
-
-
-/* =========================
-   COLLISION
-========================= */
-
-function isColliding(a, b) {
-
-    return (
-
-        a.left < b.right &&
-        a.right > b.left &&
-        a.top < b.bottom &&
-        a.bottom > b.top
-
-    );
-
-}
-
-
-/* =========================
-   PIÈCES
-========================= */
-
-function checkCoins() {
-
-    const playerRect =
-        getPlayerRect();
-
-
-    const coinsElements =
-        document.querySelectorAll(
-            ".coin"
-        );
-
-
-    coinsElements.forEach(coin => {
-
-        if (
-            coin.dataset.collected === "true"
-        ) {
-            return;
-        }
-
-
-        const coinRect =
-            getObjectRect(coin);
-
-
-        if (
-            isColliding(
-                playerRect,
-                coinRect
-            )
-        ) {
-
-            coin.dataset.collected =
-                "true";
-
-            coin.style.display =
-                "none";
-
-
-            coins++;
-
-            score += 25;
-
-            updateHUD();
-
-        }
-
-    });
-
-}
-
-
-/* =========================
-   OBSTACLES / ENNEMIS
-========================= */
-
-function checkDanger() {
-
-    if (invincible) {
-        return;
-    }
-
-
-    const playerRect =
-        getPlayerRect();
-
-
-    const dangers =
-        document.querySelectorAll(
-            ".obstacle, .enemy"
-        );
-
-
-    dangers.forEach(object => {
-
-        if (
-            object.dataset.hit === "true"
-        ) {
-            return;
-        }
-
-
-        const objectRect =
-            getObjectRect(object);
-
-
-        if (
-            isColliding(
-                playerRect,
-                objectRect
-            )
-        ) {
-
-            object.dataset.hit =
-                "true";
-
-
-            loseLife();
-
-        }
-
-    });
-
-}
-
-
-/* =========================
-   PERDRE UNE VIE
-========================= */
-
-function loseLife() {
-
-    if (invincible) {
-        return;
-    }
-
-
-    lives--;
-
-
-    updateHUD();
-
-
-    /*
-        Petite période d'invincibilité
-        pour éviter de perdre les 3 vies
-        instantanément.
-    */
-
-    invincible = true;
-
-
-    player.style.opacity = "0.35";
-
-
-    setTimeout(() => {
-
-        player.style.opacity = "1";
+        worldX = 0;
 
         invincible = false;
 
-    }, 900);
+
+        scoreElement.textContent = "0";
+        coinsElement.textContent = "0";
+        livesElement.textContent = "3";
 
 
-    if (lives <= 0) {
-
-        endGame(false);
-
-    }
-
-}
+        world.style.transform =
+            "translateX(0px)";
 
 
-/* =========================
-   ARRIVÉE
-========================= */
-
-function checkFinish() {
-
-    const finish =
-        document.getElementById(
-            "finish"
-        );
+        player.style.left =
+            "110px";
 
 
-    const finishRect =
-        getObjectRect(finish);
+        player.style.bottom =
+            "37%";
 
 
-    const playerRect =
-        getPlayerRect();
+        player.style.opacity =
+            "1";
 
 
-    if (
-        isColliding(
-            playerRect,
-            finishRect
-        )
-    ) {
-
-        endGame(true);
-
-    }
-
-}
+        resetObjects();
 
 
-/* =========================
-   FIN DU JEU
-========================= */
+        playing = true;
 
-function endGame(won) {
+        lastTime = performance.now();
 
-    if (!running) {
-        return;
+
+        cancelAnimationFrame(animation);
+
+
+        animation =
+            requestAnimationFrame(loop);
     }
 
 
-    running = false;
+    /* =========================
+       REINITIALISER LES OBJETS
+    ========================= */
+
+    function resetObjects() {
+
+        document
+            .querySelectorAll(".coin")
+            .forEach(function (coin) {
+
+                coin.style.display = "block";
+
+                coin.dataset.collected = "false";
+
+            });
 
 
-    cancelAnimationFrame(
-        animationFrame
+        document
+            .querySelectorAll(".obstacle, .enemy")
+            .forEach(function (object) {
+
+                object.style.display = "block";
+
+                object.dataset.hit = "false";
+
+            });
+    }
+
+
+    /* =========================
+       SAUT
+    ========================= */
+
+    function jump() {
+
+        if (!playing) {
+            return;
+        }
+
+
+        if (playerY <= 1) {
+
+            velocityY = jumpPower;
+
+        }
+    }
+
+
+    /* =========================
+       BOUTONS
+    ========================= */
+
+    jumpButton.addEventListener(
+        "click",
+        function () {
+            jump();
+        }
     );
 
 
-    const finalScore =
-        Math.floor(score);
+    leftButton.addEventListener(
+        "click",
+        function () {
+
+            if (!playing) {
+                return;
+            }
+
+            worldX += 30;
+
+        }
+    );
 
 
-    finalScoreElement.textContent =
-        finalScore;
+    rightButton.addEventListener(
+        "click",
+        function () {
+
+            if (!playing) {
+                return;
+            }
+
+            worldX -= 30;
+
+        }
+    );
 
 
-    if (won) {
+    /* =========================
+       TOUCHER / CLAVIER
+    ========================= */
 
-        gameOverTitle.textContent =
-            "🏆 VICTOIRE !";
+    document.addEventListener(
+        "keydown",
+        function (event) {
 
-    } else {
+            if (
+                event.code === "Space" ||
+                event.code === "ArrowUp"
+            ) {
 
-        gameOverTitle.textContent =
-            "💥 GAME OVER";
+                event.preventDefault();
 
+                jump();
+            }
+
+
+            if (event.code === "ArrowLeft") {
+
+                worldX += 30;
+
+            }
+
+
+            if (event.code === "ArrowRight") {
+
+                worldX -= 30;
+
+            }
+
+        }
+    );
+
+
+    /* =========================
+       BOUCLE DU JEU
+    ========================= */
+
+    function loop(time) {
+
+        if (!playing) {
+            return;
+        }
+
+
+        let delta =
+            (time - lastTime) / 16.67;
+
+
+        if (delta > 2) {
+            delta = 2;
+        }
+
+
+        lastTime = time;
+
+
+        /* Gravité */
+
+        velocityY -=
+            gravity * delta;
+
+
+        playerY +=
+            velocityY * delta;
+
+
+        /* Sol */
+
+        if (playerY < 0) {
+
+            playerY = 0;
+
+            velocityY = 0;
+
+        }
+
+
+        player.style.bottom =
+            "calc(37% + " +
+            playerY +
+            "px)";
+
+
+        /* Défilement automatique */
+
+        worldX -=
+            speed * delta;
+
+
+        world.style.transform =
+            "translateX(" +
+            worldX +
+            "px)";
+
+
+        /* Score */
+
+        score +=
+            0.08 * delta;
+
+
+        scoreElement.textContent =
+            Math.floor(score);
+
+
+        checkCoins();
+
+        checkObstacles();
+
+        checkFinish();
+
+
+        animation =
+            requestAnimationFrame(loop);
     }
 
 
-    gameOver.style.display =
-        "flex";
+    /* =========================
+       COLLISION
+    ========================= */
 
-}
+    function collision(element1, element2) {
+
+        const a =
+            element1.getBoundingClientRect();
+
+        const b =
+            element2.getBoundingClientRect();
 
 
-/* =========================
-   HUD
-========================= */
+        return (
+            a.left < b.right &&
+            a.right > b.left &&
+            a.top < b.bottom &&
+            a.bottom > b.top
+        );
+    }
 
-function updateHUD() {
 
-    scoreElement.textContent =
-        Math.floor(score);
+    /* =========================
+       PIÈCES
+    ========================= */
 
-    livesElement.textContent =
-        lives;
+    function checkCoins() {
 
-    coinsElement.textContent =
-        coins;
+        const coinsList =
+            document.querySelectorAll(".coin");
 
-       }
+
+        coinsList.forEach(function (coin) {
+
+            if (
+                coin.dataset.collected === "true"
+            ) {
+                return;
+            }
+
+
+            if (collision(player, coin)) {
+
+                coin.dataset.collected =
+                    "true";
+
+                coin.style.display =
+                    "none";
+
+                coins++;
+
+                score += 25;
+
+                coinsElement.textContent =
+                    coins;
+            }
+
+        });
+    }
+
+
+    /* =========================
+       OBSTACLES
+    ========================= */
+
+    function checkObstacles() {
+
+        if (invincible) {
+            return;
+        }
+
+
+        const obstacles =
+            document.querySelectorAll(
+                ".obstacle, .enemy"
+            );
+
+
+        obstacles.forEach(function (object) {
+
+            if (
+                object.dataset.hit === "true"
+            ) {
+                return;
+            }
+
+
+            if (collision(player, object)) {
+
+                object.dataset.hit =
+                    "true";
+
+                loseLife();
+
+            }
+
+        });
+    }
+
+
+    /* =========================
+       PERDRE UNE VIE
+    ========================= */
+
+    function loseLife() {
+
+        if (invincible) {
+            return;
+        }
+
+
+        lives--;
+
+        livesElement.textContent =
+            lives;
+
+
+        if (lives <= 0) {
+
+            endGame(false);
+
+            return;
+        }
+
+
+        invincible = true;
+
+        player.style.opacity =
+            "0.35";
+
+
+        setTimeout(function () {
+
+            invincible = false;
+
+            player.style.opacity =
+                "1";
+
+        }, 1000);
+    }
+
+
+    /* =========================
+       ARRIVÉE
+    ========================= */
+
+    function checkFinish() {
+
+        const finish =
+            document.getElementById("finish");
+
+
+        if (!finish) {
+            return;
+        }
+
+
+        if (collision(player, finish)) {
+
+            endGame(true);
+
+        }
+    }
+
+
+    /* =========================
+       FIN
+    ========================= */
+
+    function endGame(won) {
+
+        if (!playing) {
+            return;
+        }
+
+
+        playing = false;
+
+
+        cancelAnimationFrame(animation);
+
+
+        finalScoreElement.textContent =
+            Math.floor(score);
+
+
+        if (won) {
+
+            gameOverTitle.textContent =
+                "🏆 VICTOIRE !";
+
+        } else {
+
+            gameOverTitle.textContent =
+                "💥 GAME OVER";
+
+        }
+
+
+        gameOver.style.display =
+            "flex";
+    }
+
+
+    /* =========================
+       REJOUER
+    ========================= */
+
+    restartButton.addEventListener(
+        "click",
+        function () {
+
+            startGame();
+
+        }
+    );
+
+
+    /* =========================
+       MENU
+    ========================= */
+
+    menuButton.addEventListener(
+        "click",
+        function () {
+
+            playing = false;
+
+            cancelAnimationFrame(animation);
+
+            game.style.display = "none";
+
+            gameOver.style.display = "none";
+
+            menu.style.display = "block";
+
+        }
+    );
+
+
+    console.log(
+        "Jaden Ninja Run chargé correctement."
+    );
+
+});

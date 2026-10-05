@@ -1,102 +1,152 @@
-// ===============================
-// ÉLÉMENTS
-// ===============================
+/* =====================================================
+   JADEN NINJA RUN
+===================================================== */
+
 
 const menu = document.getElementById("menu");
 const game = document.getElementById("game");
+const pauseScreen = document.getElementById("pauseScreen");
 const gameOver = document.getElementById("gameOver");
+const victory = document.getElementById("victory");
 
 const playButton = document.getElementById("playButton");
 const restartButton = document.getElementById("restartButton");
 const menuButton = document.getElementById("menuButton");
 
-const jumpButton = document.getElementById("jumpButton");
+const pauseButton = document.getElementById("pauseButton");
+const resumeButton = document.getElementById("resumeButton");
+const pauseMenuButton = document.getElementById("pauseMenuButton");
 
-const player = document.getElementById("player");
-const gameArea = document.getElementById("gameArea");
+const nextLevelButton =
+    document.getElementById("nextLevelButton");
 
-const scoreDisplay = document.getElementById("score");
-const coinsDisplay = document.getElementById("coins");
-const bestDisplay = document.getElementById("best");
-const finalScore = document.getElementById("finalScore");
+const player =
+    document.getElementById("player");
+
+const level =
+    document.getElementById("level");
+
+const scoreDisplay =
+    document.getElementById("score");
+
+const coinsDisplay =
+    document.getElementById("coins");
+
+const livesDisplay =
+    document.getElementById("lives");
+
+const finalScore =
+    document.getElementById("finalScore");
+
+const victoryScore =
+    document.getElementById("victoryScore");
+
+const newRecord =
+    document.getElementById("newRecord");
 
 
-// ===============================
-// SKINS
-// ===============================
+/* =====================================================
+   SKINS
+===================================================== */
 
-const skins = document.querySelectorAll(".skin");
+const skinButtons =
+    document.querySelectorAll(".skin");
 
-const skinList = [
+const skins = [
     "🥷",
     "🧙",
-    "👤"
+    "🤖"
 ];
 
 let selectedSkin = 0;
 
 
-skins.forEach((skin, index) => {
+skinButtons.forEach((button, index) => {
 
-    skin.addEventListener("click", () => {
+    button.addEventListener("click", () => {
 
         selectedSkin = index;
 
-        skins.forEach(s => {
-            s.classList.remove("selected");
+        skinButtons.forEach(item => {
+            item.classList.remove("selected");
         });
 
-        skin.classList.add("selected");
+        button.classList.add("selected");
+
+        player.textContent =
+            skins[selectedSkin];
 
     });
 
 });
 
 
-// ===============================
-// VARIABLES DU JEU
-// ===============================
+/* =====================================================
+   ÉTAT
+===================================================== */
+
+let running = false;
+let paused = false;
 
 let score = 0;
 let coins = 0;
+let lives = 3;
 
-let bestScore = 0;
+let levelNumber = 1;
 
-let gameRunning = false;
+let speed = 5;
 
+let worldX = 0;
+
+let playerX = 18;
 let playerY = 0;
 
 let velocityY = 0;
 
-let gravity = 0.8;
+let grounded = true;
 
-let isJumping = false;
+let leftPressed = false;
+let rightPressed = false;
 
-let gameSpeed = 5;
+let animationFrame;
 
 let obstacleTimer;
 let coinTimer;
-let gameLoop;
+let enemyTimer;
 
 
-// ===============================
-// RECORD
-// ===============================
+/* =====================================================
+   PHYSIQUE
+===================================================== */
 
-bestScore = Number(
-    localStorage.getItem("jadenBestScore") || 0
+const gravity = 0.85;
+const jumpPower = 15;
+
+
+/* =====================================================
+   RECORD
+===================================================== */
+
+let bestScore =
+    Number(localStorage.getItem(
+        "jadenNinjaBest"
+    ) || 0);
+
+
+/* =====================================================
+   DÉMARRER
+===================================================== */
+
+playButton.addEventListener(
+    "click",
+    startGame
 );
 
-bestDisplay.textContent = bestScore;
+restartButton.addEventListener(
+    "click",
+    startGame
+);
 
-
-// ===============================
-// DÉMARRER
-// ===============================
-
-playButton.addEventListener("click", startGame);
-
-restartButton.addEventListener("click", startGame);
 
 function startGame() {
 
@@ -104,147 +154,708 @@ function startGame() {
 
     gameOver.classList.add("hidden");
 
+    victory.classList.add("hidden");
+
+    pauseScreen.classList.add("hidden");
+
     game.classList.remove("hidden");
 
 
-    // Reset
+    resetGame();
+
+    running = true;
+
+    paused = false;
+
+    createInitialLevel();
+
+    startSpawning();
+
+    animationFrame =
+        requestAnimationFrame(gameLoop);
+
+}
+
+
+/* =====================================================
+   RESET
+===================================================== */
+
+function resetGame() {
 
     score = 0;
 
     coins = 0;
 
-    gameSpeed = 5;
+    lives = 3;
+
+    levelNumber = 1;
+
+    speed = 5;
+
+    worldX = 0;
+
+    playerX = 18;
 
     playerY = 0;
 
     velocityY = 0;
 
-    isJumping = false;
-
-    gameRunning = true;
+    grounded = true;
 
 
-    scoreDisplay.textContent = score;
+    scoreDisplay.textContent =
+        "00000";
 
-    coinsDisplay.textContent = coins;
+    coinsDisplay.textContent =
+        "0";
 
-
-    // Skin
-
-    player.textContent = skinList[selectedSkin];
-
-
-    // Supprimer anciens objets
-
-    document.querySelectorAll(".obstacle").forEach(o => o.remove());
-
-    document.querySelectorAll(".coin").forEach(c => c.remove());
+    livesDisplay.textContent =
+        "3";
 
 
-    // Timers
+    player.textContent =
+        skins[selectedSkin];
+
+
+    clearLevel();
+
+
+    level.style.width =
+        "7000px";
+
+}
+
+
+/* =====================================================
+   NETTOYAGE
+===================================================== */
+
+function clearLevel() {
+
+    level.querySelectorAll(
+        ".platform, .obstacle, .coin, .enemy, .flag"
+    ).forEach(element => {
+
+        element.remove();
+
+    });
+
+}
+
+
+/* =====================================================
+   PREMIER NIVEAU
+===================================================== */
+
+function createInitialLevel() {
+
+    clearLevel();
+
+
+    /*
+       Chaque objet possède :
+
+       x = position dans le niveau
+       type = type d'objet
+    */
+
+
+    createPlatform(0, 1500);
+
+    createPlatform(1650, 900);
+
+    createPlatform(2700, 1300);
+
+    createPlatform(4200, 800);
+
+    createPlatform(5100, 1700);
+
+
+    // Obstacles
+
+    createObstacle(650, "rock");
+
+    createObstacle(1000, "log");
+
+    createObstacle(1250, "rock");
+
+    createObstacle(1850, "log");
+
+    createObstacle(2100, "rock");
+
+    createObstacle(2900, "fire");
+
+    createObstacle(3250, "rock");
+
+    createObstacle(3500, "log");
+
+    createObstacle(4400, "rock");
+
+    createObstacle(4700, "fire");
+
+    createObstacle(5450, "log");
+
+
+    // Ennemis
+
+    createEnemy(1450);
+
+    createEnemy(2300);
+
+    createEnemy(3800);
+
+    createEnemy(4850);
+
+    createEnemy(5800);
+
+
+    // Pièces
+
+    createCoinLine(450, 5);
+
+    createCoinArc(800);
+
+    createCoinLine(1150, 4);
+
+    createCoinArc(1800);
+
+    createCoinLine(2400, 5);
+
+    createCoinArc(3000);
+
+    createCoinLine(3650, 6);
+
+    createCoinArc(4500);
+
+    createCoinLine(5250, 7);
+
+
+    // Arrivée
+
+    createFlag(6500);
+
+}
+
+
+/* =====================================================
+   PLATEFORME
+===================================================== */
+
+function createPlatform(x, width) {
+
+    const platform =
+        document.createElement("div");
+
+    platform.className =
+        "platform";
+
+    platform.style.left =
+        x + "px";
+
+    platform.style.width =
+        width + "px";
+
+    level.appendChild(platform);
+
+}
+
+
+/* =====================================================
+   OBSTACLE
+===================================================== */
+
+function createObstacle(x, type) {
+
+    const obstacle =
+        document.createElement("div");
+
+    obstacle.className =
+        "obstacle " + type;
+
+    obstacle.dataset.x = x;
+
+    obstacle.style.left =
+        x + "px";
+
+    level.appendChild(obstacle);
+
+}
+
+
+/* =====================================================
+   ENNEMI
+===================================================== */
+
+function createEnemy(x) {
+
+    const enemy =
+        document.createElement("div");
+
+    enemy.className =
+        "enemy";
+
+    enemy.dataset.x = x;
+
+    enemy.style.left =
+        x + "px";
+
+    enemy.textContent =
+        "👾";
+
+    level.appendChild(enemy);
+
+}
+
+
+/* =====================================================
+   PIÈCE
+===================================================== */
+
+function createCoin(x, y) {
+
+    const coin =
+        document.createElement("div");
+
+    coin.className =
+        "coin";
+
+    coin.dataset.x = x;
+
+    coin.dataset.y = y;
+
+    coin.style.left =
+        x + "px";
+
+    coin.style.bottom =
+        (45 + y) + "px";
+
+    coin.textContent =
+        "🪙";
+
+    level.appendChild(coin);
+
+}
+
+
+/* =====================================================
+   LIGNES DE PIÈCES
+===================================================== */
+
+function createCoinLine(startX, amount) {
+
+    for (let i = 0; i < amount; i++) {
+
+        createCoin(
+            startX + i * 55,
+            70
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ARC DE PIÈCES
+===================================================== */
+
+function createCoinArc(startX) {
+
+    const heights = [
+        70,
+        110,
+        145,
+        110,
+        70
+    ];
+
+    heights.forEach((height, index) => {
+
+        createCoin(
+            startX + index * 55,
+            height
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   DRAPEAU
+===================================================== */
+
+function createFlag(x) {
+
+    const flag =
+        document.createElement("div");
+
+    flag.className =
+        "flag";
+
+    flag.dataset.x = x;
+
+    flag.style.left =
+        x + "px";
+
+    level.appendChild(flag);
+
+}
+
+
+/* =====================================================
+   SPAWN
+===================================================== */
+
+function startSpawning() {
 
     clearInterval(obstacleTimer);
     clearInterval(coinTimer);
+    clearInterval(enemyTimer);
 
 
-    obstacleTimer = setInterval(
-        createObstacle,
-        1300
-    );
+    /*
+       Les éléments sont surtout préparés
+       dans le niveau.
 
-    coinTimer = setInterval(
-        createCoin,
-        1600
-    );
+       Ces timers servent à augmenter
+       progressivement le contenu.
+    */
+
+    obstacleTimer =
+        setInterval(() => {
+
+            if (!running || paused) return;
+
+            const lastX =
+                worldX + window.innerWidth + 400;
+
+            const randomType =
+                Math.random() > 0.5
+                    ? "rock"
+                    : "log";
+
+            createObstacle(
+                lastX,
+                randomType
+            );
+
+        }, 2400);
 
 
-    cancelAnimationFrame(gameLoop);
+    coinTimer =
+        setInterval(() => {
 
-    updateGame();
+            if (!running || paused) return;
+
+            const x =
+                worldX + window.innerWidth + 300;
+
+            createCoin(
+                x,
+                80 + Math.random() * 80
+            );
+
+        }, 1800);
+
+
+    enemyTimer =
+        setInterval(() => {
+
+            if (!running || paused) return;
+
+            const x =
+                worldX + window.innerWidth + 700;
+
+            createEnemy(x);
+
+        }, 5000);
 
 }
 
 
-// ===============================
-// SAUT
-// ===============================
+/* =====================================================
+   SAUT
+===================================================== */
 
 function jump() {
 
-    if (!gameRunning) return;
+    if (!running || paused) return;
 
-    if (isJumping) return;
+    if (!grounded) return;
 
+    velocityY =
+        jumpPower;
 
-    isJumping = true;
-
-    velocityY = 15;
+    grounded = false;
 
 }
 
 
-// Bouton téléphone
+/* =====================================================
+   CONTRÔLES
+===================================================== */
 
-jumpButton.addEventListener("pointerdown", (event) => {
+function pressLeft(event) {
 
     event.preventDefault();
 
-    jump();
+    leftPressed = true;
 
-});
+}
 
+function releaseLeft(event) {
 
-// Toucher directement l'écran
+    event.preventDefault();
 
-gameArea.addEventListener("pointerdown", (event) => {
+    leftPressed = false;
 
-    if (
-        event.target === gameArea ||
-        event.target === player
-    ) {
-        jump();
-    }
-
-});
+}
 
 
-// ===============================
-// CLAVIER
-// ===============================
+function pressRight(event) {
 
-document.addEventListener("keydown", (event) => {
+    event.preventDefault();
 
-    if (
-        event.code === "Space" ||
-        event.code === "ArrowUp"
-    ) {
+    rightPressed = true;
+
+}
+
+function releaseRight(event) {
+
+    event.preventDefault();
+
+    rightPressed = false;
+
+}
+
+
+/* Gauche */
+
+const leftButton =
+    document.getElementById(
+        "leftButton"
+    );
+
+leftButton.addEventListener(
+    "pointerdown",
+    pressLeft
+);
+
+leftButton.addEventListener(
+    "pointerup",
+    releaseLeft
+);
+
+leftButton.addEventListener(
+    "pointercancel",
+    releaseLeft
+);
+
+leftButton.addEventListener(
+    "pointerleave",
+    releaseLeft
+);
+
+
+/* Droite */
+
+const rightButton =
+    document.getElementById(
+        "rightButton"
+    );
+
+rightButton.addEventListener(
+    "pointerdown",
+    pressRight
+);
+
+rightButton.addEventListener(
+    "pointerup",
+    releaseRight
+);
+
+rightButton.addEventListener(
+    "pointercancel",
+    releaseRight
+);
+
+rightButton.addEventListener(
+    "pointerleave",
+    releaseRight
+);
+
+
+/* Saut */
+
+const jumpButton =
+    document.getElementById(
+        "jumpButton"
+    );
+
+jumpButton.addEventListener(
+    "pointerdown",
+    event => {
 
         event.preventDefault();
 
         jump();
 
     }
-
-});
-
-
-// ===============================
-// BOUCLE PRINCIPALE
-// ===============================
-
-function updateGame() {
-
-    if (!gameRunning) return;
+);
 
 
-    // Gravité
+/* =====================================================
+   CLAVIER
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.code === "ArrowLeft") {
+
+            leftPressed = true;
+
+        }
+
+        if (event.code === "ArrowRight") {
+
+            rightPressed = true;
+
+        }
+
+        if (
+            event.code === "Space" ||
+            event.code === "ArrowUp"
+        ) {
+
+            jump();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "keyup",
+    event => {
+
+        if (event.code === "ArrowLeft") {
+
+            leftPressed = false;
+
+        }
+
+        if (event.code === "ArrowRight") {
+
+            rightPressed = false;
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   COLLISION
+===================================================== */
+
+function collision(a, b) {
+
+    const A =
+        a.getBoundingClientRect();
+
+    const B =
+        b.getBoundingClientRect();
+
+
+    const padding = 8;
+
+
+    return !(
+        A.right - padding < B.left ||
+        A.left + padding > B.right ||
+        A.bottom - padding < B.top ||
+        A.top + padding > B.bottom
+    );
+
+}
+
+
+/* =====================================================
+   GAME LOOP
+===================================================== */
+
+function gameLoop() {
+
+    if (!running) return;
+
+    if (!paused) {
+
+        updatePlayer();
+
+        updateWorld();
+
+        checkObjects();
+
+        updateCamera();
+
+        updateScore();
+
+    }
+
+    animationFrame =
+        requestAnimationFrame(gameLoop);
+
+}
+
+
+/* =====================================================
+   JOUEUR
+===================================================== */
+
+function updatePlayer() {
+
+    if (leftPressed) {
+
+        playerX -= 0.8;
+
+    }
+
+    if (rightPressed) {
+
+        playerX += 0.8;
+
+    }
+
+
+    /*
+       Le personnage avance
+       automatiquement.
+    */
+
+    playerX += 0.18;
+
+
+    playerX =
+        Math.max(
+            5,
+            Math.min(
+                45,
+                playerX
+            )
+        );
+
+
+    /* Gravité */
 
     velocityY -= gravity;
 
     playerY += velocityY;
 
-
-    // Sol
 
     if (playerY <= 0) {
 
@@ -252,160 +863,113 @@ function updateGame() {
 
         velocityY = 0;
 
-        isJumping = false;
+        grounded = true;
 
     }
 
 
+    player.style.left =
+        playerX + "%";
+
+
     player.style.bottom =
-        `calc(20% + ${playerY}px)`;
+        (playerY + 45) + "px";
 
 
-    // Déplacement objets
+    /*
+       Petite animation de course
+    */
 
-    moveObjects();
+    if (grounded) {
 
+        const run =
+            Math.sin(
+                Date.now() / 90
+            ) * 2;
 
-    // Score
+        player.style.transform =
+            `translateY(${run}px)`;
 
-    score += 0.03;
+    } else {
 
-    scoreDisplay.textContent =
-        Math.floor(score);
+        player.style.transform =
+            "rotate(-8deg)";
 
-
-    // Difficulté
-
-    gameSpeed += 0.0005;
-
-
-    gameLoop =
-        requestAnimationFrame(updateGame);
-
-}
-
-
-// ===============================
-// OBSTACLE
-// ===============================
-
-function createObstacle() {
-
-    if (!gameRunning) return;
-
-
-    const obstacle =
-        document.createElement("div");
-
-    obstacle.className = "obstacle";
-
-
-    obstacle.style.left =
-        gameArea.offsetWidth + "px";
-
-
-    gameArea.appendChild(obstacle);
+    }
 
 }
 
 
-// ===============================
-// PIÈCE
-// ===============================
+/* =====================================================
+   CAMÉRA
+===================================================== */
 
-function createCoin() {
+function updateCamera() {
 
-    if (!gameRunning) return;
+    /*
+       Le monde défile vers la gauche.
+    */
 
+    worldX += speed;
 
-    const coin =
-        document.createElement("div");
-
-    coin.className = "coin";
-
-    coin.textContent = "🪙";
-
-
-    const height =
-        Math.random() * 150 + 80;
+    level.style.transform =
+        `translateX(${-worldX}px)`;
 
 
-    coin.style.bottom =
-        `calc(20% + ${height}px)`;
+    /*
+       Augmentation progressive
+       de la difficulté.
+    */
 
-
-    coin.style.left =
-        gameArea.offsetWidth + "px";
-
-
-    gameArea.appendChild(coin);
+    speed += 0.00025;
 
 }
 
 
-// ===============================
-// DÉPLACER OBJETS
-// ===============================
+/* =====================================================
+   OBJETS
+===================================================== */
 
-function moveObjects() {
+function checkObjects() {
 
     const objects =
-        document.querySelectorAll(
-            ".obstacle, .coin"
+        level.querySelectorAll(
+            ".obstacle, .enemy, .coin, .flag"
         );
 
 
     objects.forEach(object => {
 
-        let x =
-            parseFloat(object.style.left);
+        if (
+            collision(
+                player,
+                object
+            )
+        ) {
 
+            if (
+                object.classList.contains(
+                    "coin"
+                )
+            ) {
 
-        x -= gameSpeed;
-
-
-        object.style.left =
-            x + "px";
-
-
-        // Hors écran
-
-        if (x < -100) {
-
-            object.remove();
-
-            return;
-
-        }
-
-
-        // Collision
-
-        if (object.classList.contains("obstacle")) {
-
-            if (checkCollision(player, object)) {
-
-                endGame();
+                collectCoin(object);
 
             }
 
-        }
+            else if (
+                object.classList.contains(
+                    "flag"
+                )
+            ) {
 
+                finishLevel();
 
-        // Pièce
+            }
 
-        if (object.classList.contains("coin")) {
+            else {
 
-            if (checkCollision(player, object)) {
-
-                coins++;
-
-                score += 5;
-
-                coinsDisplay.textContent =
-                    coins;
-
-                object.remove();
+                hitEnemy(object);
 
             }
 
@@ -416,69 +980,168 @@ function moveObjects() {
 }
 
 
-// ===============================
-// COLLISION
-// ===============================
+/* =====================================================
+   PIÈCE
+===================================================== */
 
-function checkCollision(a, b) {
+function collectCoin(coin) {
 
-    const rectA =
-        a.getBoundingClientRect();
+    coins++;
 
-    const rectB =
-        b.getBoundingClientRect();
+    score += 100;
 
+    coinsDisplay.textContent =
+        coins;
 
-    return !(
-        rectA.right < rectB.left ||
-        rectA.left > rectB.right ||
-        rectA.bottom < rectB.top ||
-        rectA.top > rectB.bottom
-    );
+    coin.remove();
 
 }
 
 
-// ===============================
-// FIN DU JEU
-// ===============================
+/* =====================================================
+   COLLISION OBSTACLE
+===================================================== */
 
-function endGame() {
+let invincible = false;
 
-    if (!gameRunning) return;
+function hitEnemy(object) {
+
+    if (invincible) return;
+
+    invincible = true;
+
+    lives--;
+
+    livesDisplay.textContent =
+        lives;
 
 
-    gameRunning = false;
+    /*
+       Faire disparaître l'objet
+       qui nous a touché.
+    */
+
+    object.remove();
+
+
+    /*
+       Petite période d'invincibilité.
+    */
+
+    player.style.opacity = "0.4";
+
+
+    setTimeout(() => {
+
+        invincible = false;
+
+        player.style.opacity = "1";
+
+    }, 1000);
+
+
+    if (lives <= 0) {
+
+        endGame();
+
+    }
+
+}
+
+
+/* =====================================================
+   SCORE
+===================================================== */
+
+function updateScore() {
+
+    score += speed * 0.025;
+
+    scoreDisplay.textContent =
+        String(
+            Math.floor(score)
+        ).padStart(5, "0");
+
+}
+
+
+/* =====================================================
+   FIN DU NIVEAU
+===================================================== */
+
+function finishLevel() {
+
+    if (!running) return;
+
+    running = false;
 
 
     clearInterval(obstacleTimer);
-
     clearInterval(coinTimer);
+    clearInterval(enemyTimer);
 
-    cancelAnimationFrame(gameLoop);
+
+    cancelAnimationFrame(
+        animationFrame
+    );
 
 
-    const currentScore =
+    victoryScore.textContent =
+        Math.floor(score);
+
+
+    game.classList.add("hidden");
+
+    victory.classList.remove("hidden");
+
+}
+
+
+/* =====================================================
+   GAME OVER
+===================================================== */
+
+function endGame() {
+
+    if (!running) return;
+
+    running = false;
+
+
+    clearInterval(obstacleTimer);
+    clearInterval(coinTimer);
+    clearInterval(enemyTimer);
+
+
+    cancelAnimationFrame(
+        animationFrame
+    );
+
+
+    const final =
         Math.floor(score);
 
 
     finalScore.textContent =
-        currentScore;
+        final;
 
 
-    // Record
+    if (final > bestScore) {
 
-    if (currentScore > bestScore) {
-
-        bestScore = currentScore;
+        bestScore = final;
 
         localStorage.setItem(
-            "jadenBestScore",
+            "jadenNinjaBest",
             bestScore
         );
 
-        bestDisplay.textContent =
-            bestScore;
+        newRecord.textContent =
+            "🏆 NOUVEAU RECORD !";
+
+    } else {
+
+        newRecord.textContent =
+            `Meilleur score : ${bestScore}`;
 
     }
 
@@ -490,16 +1153,137 @@ function endGame() {
 }
 
 
-// ===============================
-// RETOUR MENU
-// ===============================
+/* =====================================================
+   PAUSE
+===================================================== */
 
-menuButton.addEventListener("click", () => {
+pauseButton.addEventListener(
+    "click",
+    () => {
 
-    gameOver.classList.add("hidden");
+        if (!running) return;
 
-    game.classList.add("hidden");
+        paused = true;
 
-    menu.classList.remove("hidden");
+        pauseScreen.classList.remove(
+            "hidden"
+        );
 
-});
+    }
+);
+
+
+resumeButton.addEventListener(
+    "click",
+    () => {
+
+        paused = false;
+
+        pauseScreen.classList.add(
+            "hidden"
+        );
+
+    }
+);
+
+
+pauseMenuButton.addEventListener(
+    "click",
+    () => {
+
+        paused = false;
+
+        running = false;
+
+        clearInterval(obstacleTimer);
+        clearInterval(coinTimer);
+        clearInterval(enemyTimer);
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+        pauseScreen.classList.add(
+            "hidden"
+        );
+
+        game.classList.add(
+            "hidden"
+        );
+
+        menu.classList.remove(
+            "hidden"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+menuButton.addEventListener(
+    "click",
+    () => {
+
+        gameOver.classList.add(
+            "hidden"
+        );
+
+        game.classList.add(
+            "hidden"
+        );
+
+        menu.classList.remove(
+            "hidden"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   NIVEAU SUIVANT
+===================================================== */
+
+nextLevelButton.addEventListener(
+    "click",
+    () => {
+
+        victory.classList.add(
+            "hidden"
+        );
+
+        game.classList.remove(
+            "hidden"
+        );
+
+
+        levelNumber++;
+
+        speed += 1.5;
+
+        running = true;
+
+        paused = false;
+
+
+        /*
+           Pour l'instant, on recrée le niveau
+           avec une difficulté supérieure.
+        */
+
+        createInitialLevel();
+
+        worldX = 0;
+
+        startSpawning();
+
+        animationFrame =
+            requestAnimationFrame(
+                gameLoop
+            );
+
+    }
+);

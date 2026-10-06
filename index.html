@@ -3,101 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+          content="width=device-width, initial-scale=1.0,
+                   maximum-scale=1.0, user-scalable=no">
 
-    <title>Ninja Run</title>
-
+    <title>Jaden Ninja Run</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <main class="game">
+<div id="menu">
 
-        <!-- Décor -->
-        <div class="sky">
-            <div class="moon"></div>
-            <div class="cloud cloud1"></div>
-            <div class="cloud cloud2"></div>
-        </div>
+    <h1>JADEN</h1>
+    <h2>N I N J A  R U N</h2>
 
-        <!-- Interface -->
-        <div class="top-ui">
-            <div>
-                SCORE
-                <strong id="score">0</strong>
+    <p>Choisis ton ninja</p>
+
+    <div class="characters">
+
+        <button class="character selected" data-character="ninja">
+            <div class="person ninja-person">
+                <div class="head"></div>
+                <div class="body"></div>
+                <div class="legs">
+                    <i></i><i></i>
+                </div>
             </div>
+            <strong>NINJA</strong>
+        </button>
 
-            <div>
-                RECORD
-                <strong id="best">0</strong>
+        <button class="character" data-character="shadow">
+            <div class="person shadow-person">
+                <div class="head"></div>
+                <div class="body"></div>
+                <div class="legs">
+                    <i></i><i></i>
+                </div>
             </div>
-        </div>
+            <strong>SHADOW</strong>
+        </button>
 
-        <!-- Personnage -->
-        <div id="ninja" class="ninja">
-            🥷
-        </div>
-
-        <!-- Obstacle -->
-        <div id="obstacle" class="obstacle">
-            🪨
-        </div>
-
-        <!-- Sol -->
-        <div class="ground"></div>
-
-        <!-- Écran de départ -->
-        <section id="startScreen" class="screen">
-            <div class="panel">
-
-                <div class="big-ninja">🥷</div>
-
-                <h1>NINJA<br><span>RUN</span></h1>
-
-                <p>Évite les obstacles !</p>
-
-                <button id="startButton">
-                    JOUER
-                </button>
-
-                <small>
-                    Appuie sur SAUTER pour éviter les rochers
-                </small>
-
+        <button class="character" data-character="fire">
+            <div class="person fire-person">
+                <div class="head"></div>
+                <div class="body"></div>
+                <div class="legs">
+                    <i></i><i></i>
+                </div>
             </div>
-        </section>
+            <strong>FIRE</strong>
+        </button>
 
-        <!-- Game Over -->
-        <section id="gameOver" class="screen hidden">
-            <div class="panel">
+    </div>
 
-                <div class="big-ninja">💥</div>
+    <button id="playButton">JOUER</button>
 
-                <h2>GAME OVER</h2>
+</div>
 
-                <p>
-                    Score :
-                    <strong id="finalScore">0</strong>
-                </p>
 
-                <button id="restartButton">
-                    REJOUER
-                </button>
+<div id="game" class="hidden">
 
-            </div>
-        </section>
-
-        <!-- Contrôles téléphone -->
-        <div class="controls">
-            <button id="jumpButton">
-                SAUTER
-            </button>
+    <div class="game-top">
+        <div>
+            SCORE
+            <b id="score">0</b>
         </div>
 
-    </main>
+        <div>
+            RECORD
+            <b id="best">0</b>
+        </div>
+    </div>
 
-    <script src="script.js"></script>
+    <div id="player">
+        🥷
+    </div>
+
+    <div id="obstacle">
+        🪨
+    </div>
+
+    <div class="ground"></div>
+
+    <button id="jumpButton">SAUTER</button>
+
+</div>
+
+
+<div id="gameOver" class="hidden">
+
+    <h2>GAME OVER</h2>
+
+    <p>Score : <b id="finalScore">0</b></p>
+
+    <button id="retryButton">REJOUER</button>
+
+    <button id="menuButton">MENU</button>
+
+</div>
+
+
+<script src="script.js"></script>
 
 </body>
 </html>

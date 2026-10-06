@@ -1,125 +1,237 @@
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
+    margin: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #0d1528;
+    color: white;
 }
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #080808;
+button {
+    font-family: Arial, sans-serif;
+    cursor: pointer;
     touch-action: manipulation;
 }
+
+/* =========================
+   MENU
+========================= */
+
+#menu {
+    width: 100%;
+    height: 100vh;
+    padding: 45px 25px;
+
+    text-align: center;
+
+    background: #0d1528;
+}
+
+#menu h1 {
+    margin: 0;
+
+    font-size: 48px;
+    color: #ffd43b;
+    letter-spacing: 3px;
+}
+
+#menu h2 {
+    margin: 2px 0 40px;
+
+    font-size: 25px;
+    letter-spacing: 8px;
+}
+
+#menu p {
+    color: #aeb6c7;
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+/* =========================
+   PERSONNAGES
+========================= */
+
+.characters {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    max-width: 650px;
+    margin: auto;
+}
+
+.character {
+    flex: 1;
+
+    height: 210px;
+
+    border: 3px solid #293750;
+    border-radius: 25px;
+
+    background: #202c40;
+
+    color: white;
+
+    position: relative;
+
+    padding: 10px;
+
+    touch-action: manipulation;
+}
+
+.character.selected {
+    border-color: #ffd43b;
+    background: #2b384e;
+}
+
+.character:active {
+    transform: scale(.97);
+}
+
+.character strong {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+
+    font-size: 20px;
+}
+
+/* Personnage CSS */
+
+.person {
+    position: absolute;
+
+    width: 70px;
+    height: 110px;
+
+    left: 50%;
+    top: 15px;
+
+    transform: translateX(-50%);
+}
+
+.head {
+    width: 50px;
+    height: 50px;
+
+    margin: auto;
+
+    border-radius: 50%;
+
+    background: #dfa06e;
+
+    border: 4px solid #151b29;
+}
+
+.body {
+    width: 55px;
+    height: 55px;
+
+    margin: -2px auto 0;
+
+    border-radius: 10px 10px 5px 5px;
+
+    background: #263c79;
+}
+
+.legs {
+    display: flex;
+    justify-content: space-between;
+
+    width: 45px;
+
+    margin: -1px auto;
+}
+
+.legs i {
+    width: 18px;
+    height: 32px;
+
+    border-radius: 0 0 8px 8px;
+
+    background: #151b29;
+}
+
+/* Shadow */
+
+.shadow-person .head {
+    background: #858b99;
+}
+
+.shadow-person .body {
+    background: #151b29;
+}
+
+/* Fire */
+
+.fire-person .body {
+    background: #c84028;
+}
+
+
+/* =========================
+   BOUTON JOUER
+========================= */
+
+#playButton {
+    width: 100%;
+    max-width: 650px;
+
+    height: 95px;
+
+    margin-top: 45px;
+
+    border: none;
+    border-radius: 25px;
+
+    background: #ffd43b;
+
+    color: #111;
+
+    font-size: 32px;
+    font-weight: bold;
+}
+
+#playButton:active {
+    transform: scale(.97);
+}
+
 
 /* =========================
    JEU
 ========================= */
 
-.game {
+#game {
     position: relative;
 
-    width: 100vw;
+    width: 100%;
     height: 100vh;
 
     overflow: hidden;
 
     background:
         linear-gradient(
-            to bottom,
-            #101b3d 0%,
-            #243c68 55%,
-            #60748d 100%
+            #101a32,
+            #304b72
         );
 }
 
-/* =========================
-   CIEL
-========================= */
-
-.sky {
-    position: absolute;
-    inset: 0;
-
-    overflow: hidden;
+.hidden {
+    display: none !important;
 }
 
-.moon {
-    position: absolute;
 
-    width: 80px;
-    height: 80px;
+/* Score */
 
-    right: 12%;
-    top: 10%;
-
-    border-radius: 50%;
-
-    background: #fff4bd;
-
-    box-shadow:
-        0 0 30px #fff4bd,
-        0 0 70px rgba(255, 244, 189, .35);
-}
-
-.cloud {
-    position: absolute;
-
-    width: 120px;
-    height: 35px;
-
-    border-radius: 50px;
-
-    background: rgba(255, 255, 255, .12);
-}
-
-.cloud::before,
-.cloud::after {
-    content: "";
-
-    position: absolute;
-
-    background: inherit;
-
-    border-radius: 50%;
-}
-
-.cloud::before {
-    width: 55px;
-    height: 55px;
-
-    left: 20px;
-    bottom: 0;
-}
-
-.cloud::after {
-    width: 70px;
-    height: 70px;
-
-    right: 15px;
-    bottom: 0;
-}
-
-.cloud1 {
-    top: 25%;
-    left: -30px;
-}
-
-.cloud2 {
-    top: 40%;
-    right: -50px;
-}
-
-/* =========================
-   INTERFACE
-========================= */
-
-.top-ui {
+.game-top {
     position: absolute;
 
     top: 20px;
@@ -129,116 +241,71 @@ body {
     display: flex;
     justify-content: space-between;
 
-    color: white;
+    z-index: 20;
 
     font-size: 13px;
-    font-weight: bold;
-
-    z-index: 20;
 }
 
-.top-ui div {
+.game-top div {
     display: flex;
     flex-direction: column;
-    gap: 3px;
 }
 
-.top-ui strong {
+.game-top b {
     font-size: 25px;
 }
 
-/* =========================
-   NINJA
-========================= */
 
-.ninja {
+/* Joueur */
+
+#player {
     position: absolute;
 
-    left: 14%;
+    left: 15%;
 
-    bottom: 85px;
+    bottom: 90px;
 
-    width: 70px;
-    height: 70px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 58px;
+    font-size: 60px;
 
     z-index: 10;
-
-    transform-origin: bottom center;
 }
 
-/* Animation de course */
-
-.ninja.running {
-    animation: runAnimation .18s infinite alternate;
+#player.jump {
+    animation: jump .65s ease-out;
 }
 
-@keyframes runAnimation {
-
-    from {
-        transform: translateY(0) rotate(-2deg);
-    }
-
-    to {
-        transform: translateY(-4px) rotate(2deg);
-    }
-}
-
-/* Saut */
-
-.ninja.jumping {
-    animation: jumpAnimation .65s ease-out;
-}
-
-@keyframes jumpAnimation {
+@keyframes jump {
 
     0% {
-        bottom: 85px;
-        transform: rotate(0);
+        bottom: 90px;
     }
 
-    45% {
-        bottom: 250px;
-        transform: rotate(-10deg);
+    50% {
+        bottom: 270px;
     }
 
     100% {
-        bottom: 85px;
-        transform: rotate(0);
+        bottom: 90px;
     }
 }
 
-/* =========================
-   OBSTACLE
-========================= */
 
-.obstacle {
+/* Obstacle */
+
+#obstacle {
     position: absolute;
 
     left: 100%;
 
-    bottom: 85px;
+    bottom: 90px;
 
-    width: 65px;
-    height: 65px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 50px;
+    font-size: 55px;
 
     z-index: 9;
 }
 
-/* =========================
-   SOL
-========================= */
+
+/* Sol */
 
 .ground {
     position: absolute;
@@ -247,168 +314,98 @@ body {
     bottom: 0;
 
     width: 100%;
-    height: 85px;
+    height: 90px;
 
     background:
         repeating-linear-gradient(
             135deg,
-            #161616 0,
-            #161616 25px,
-            #202020 25px,
-            #202020 50px
+            #171717 0,
+            #171717 25px,
+            #252525 25px,
+            #252525 50px
         );
 
-    border-top: 5px solid #e5a52a;
-
-    z-index: 8;
+    border-top: 5px solid #ffd43b;
 }
 
-/* =========================
-   BOUTON
-========================= */
 
-.controls {
+/* Bouton saut */
+
+#jumpButton {
     position: absolute;
 
     right: 20px;
-    bottom: 105px;
+    bottom: 115px;
 
-    z-index: 30;
-}
-
-#jumpButton {
-    width: 125px;
+    width: 130px;
     height: 70px;
 
     border: 3px solid white;
     border-radius: 40px;
 
-    background: rgba(255, 170, 0, .85);
+    background: #ffd43b;
 
-    color: #111;
+    font-size: 18px;
+    font-weight: bold;
 
-    font-size: 17px;
-    font-weight: 900;
-
-    box-shadow:
-        0 5px 0 #9c6200,
-        0 8px 20px rgba(0, 0, 0, .3);
-
-    user-select: none;
-    -webkit-user-select: none;
-
-    touch-action: manipulation;
+    z-index: 30;
 }
 
 #jumpButton:active {
-    transform: translateY(5px);
-
-    box-shadow:
-        0 0 0 #9c6200;
+    transform: scale(.9);
 }
 
+
 /* =========================
-   ÉCRANS
+   GAME OVER
 ========================= */
 
-.screen {
-    position: absolute;
+#gameOver {
+    position: fixed;
 
     inset: 0;
 
+    z-index: 100;
+
+    background: rgba(5, 8, 15, .92);
+
     display: flex;
-    align-items: center;
+
+    flex-direction: column;
+
     justify-content: center;
 
-    background: rgba(0, 0, 0, .65);
-
-    z-index: 100;
-}
-
-.hidden {
-    display: none;
-}
-
-.panel {
-    width: min(90%, 400px);
-
-    padding: 35px 25px;
+    align-items: center;
 
     text-align: center;
-
-    color: white;
-
-    border-radius: 25px;
-
-    background: rgba(10, 10, 15, .92);
-
-    border: 2px solid rgba(255, 255, 255, .15);
-
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, .5);
 }
 
-.big-ninja {
-    font-size: 75px;
-
-    margin-bottom: 10px;
+#gameOver h2 {
+    font-size: 45px;
 }
 
-h1 {
-    font-size: 48px;
-
-    line-height: .85;
-
-    letter-spacing: 5px;
-}
-
-h1 span {
-    color: #ffb300;
-}
-
-h2 {
-    font-size: 40px;
-
-    margin-bottom: 15px;
-}
-
-.panel p {
-    margin: 20px 0;
-
-    color: #bbb;
-
-    font-size: 16px;
-}
-
-.panel button {
+#gameOver button {
     width: 80%;
+    max-width: 400px;
 
-    padding: 17px;
+    height: 65px;
+
+    margin: 8px;
 
     border: none;
-    border-radius: 12px;
+    border-radius: 18px;
 
-    background: #ffb300;
+    background: #ffd43b;
 
-    color: #111;
-
-    font-size: 20px;
-    font-weight: 900;
-
-    cursor: pointer;
+    font-size: 22px;
+    font-weight: bold;
 }
 
-.panel button:active {
-    transform: scale(.96);
+#menuButton {
+    background: #293750 !important;
+    color: white;
 }
 
-.panel small {
-    display: block;
-
-    margin-top: 20px;
-
-    color: #777;
-}
 
 /* =========================
    PC
@@ -416,57 +413,11 @@ h2 {
 
 @media (min-width: 700px) {
 
-    .game {
-        width: 900px;
-        height: 550px;
-
-        margin: auto;
-
-        border-radius: 20px;
-
-        box-shadow:
-            0 20px 80px rgba(0, 0, 0, .6);
+    #menu {
+        padding-top: 70px;
     }
 
-    body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-}
-
-/* =========================
-   PETIT ÉCRAN
-========================= */
-
-@media (max-height: 600px) {
-
-    .ninja {
-        bottom: 65px;
-    }
-
-    .obstacle {
-        bottom: 65px;
-    }
-
-    .ground {
-        height: 65px;
-    }
-
-    .controls {
-        bottom: 80px;
-    }
-
-    .panel {
-        padding: 20px;
-    }
-
-    .big-ninja {
-        font-size: 50px;
-    }
-
-    h1 {
-        font-size: 35px;
+    .characters {
+        gap: 20px;
     }
 }

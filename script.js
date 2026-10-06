@@ -1,53 +1,104 @@
-// ==============================
-// NINJA RUN
-// ==============================
+// ========================================
+// JADEN NINJA RUN
+// ========================================
 
-const game = document.querySelector(".game");
+const menu = document.getElementById("menu");
+const game = document.getElementById("game");
+const gameOver = document.getElementById("gameOver");
 
-const ninja = document.getElementById("ninja");
-const obstacle = document.getElementById("obstacle");
+const characters = document.querySelectorAll(".character");
 
-const scoreElement = document.getElementById("score");
-const bestElement = document.getElementById("best");
-
-const startScreen = document.getElementById("startScreen");
-const gameOverScreen = document.getElementById("gameOver");
-
-const startButton = document.getElementById("startButton");
-const restartButton = document.getElementById("restartButton");
-
+const playButton = document.getElementById("playButton");
 const jumpButton = document.getElementById("jumpButton");
 
+const retryButton = document.getElementById("retryButton");
+const menuButton = document.getElementById("menuButton");
+
+const player = document.getElementById("player");
+const obstacle = document.getElementById("obstacle");
+
+const scoreText = document.getElementById("score");
+const bestText = document.getElementById("best");
 const finalScore = document.getElementById("finalScore");
 
-// ==============================
+
+// ========================================
 // VARIABLES
-// ==============================
+// ========================================
+
+let selectedCharacter = "ninja";
 
 let playing = false;
 
 let score = 0;
-let best = Number(localStorage.getItem("ninjaBest")) || 0;
+let best = Number(localStorage.getItem("jadenBest")) || 0;
 
-let obstacleX = 0;
+let obstaclePosition = 0;
 
 let speed = 7;
 
 let lastTime = 0;
 
+let nextObstacle = 1000;
+
 let obstacleTimer = 0;
 
-let nextObstacle = 1200;
 
 // Afficher le record
-bestElement.textContent = best;
+bestText.textContent = best;
 
 
-// ==============================
-// DEMARRER
-// ==============================
+// ========================================
+// CHOIX DU NINJA
+// ========================================
+
+characters.forEach(character => {
+
+    character.addEventListener("pointerdown", function(event) {
+
+        event.preventDefault();
+
+        // Retirer la sélection
+        characters.forEach(c => {
+            c.classList.remove("selected");
+        });
+
+        // Sélectionner celui touché
+        character.classList.add("selected");
+
+        selectedCharacter =
+            character.dataset.character;
+
+        console.log(
+            "Ninja choisi :",
+            selectedCharacter
+        );
+
+    });
+
+});
+
+
+// ========================================
+// JOUER
+// ========================================
+
+playButton.addEventListener("pointerdown", function(event) {
+
+    event.preventDefault();
+
+    startGame();
+
+});
+
+
+// ========================================
+// DEMARRER LE JEU
+// ========================================
 
 function startGame() {
+
+    console.log("Jeu démarré");
 
     playing = true;
 
@@ -55,18 +106,24 @@ function startGame() {
 
     speed = 7;
 
-    obstacleX = game.clientWidth + 100;
-
     obstacleTimer = 0;
 
-    nextObstacle = random(900, 1700);
+    nextObstacle = 1000;
 
-    scoreElement.textContent = "0";
+    obstaclePosition =
+        window.innerWidth + 100;
 
-    startScreen.classList.add("hidden");
-    gameOverScreen.classList.add("hidden");
+    scoreText.textContent = "0";
 
-    ninja.classList.add("running");
+    menu.classList.add("hidden");
+
+    game.classList.remove("hidden");
+
+    gameOver.classList.add("hidden");
+
+    player.classList.remove("jump");
+
+    changePlayer();
 
     lastTime = performance.now();
 
@@ -74,9 +131,35 @@ function startGame() {
 }
 
 
-// ==============================
+// ========================================
+// CHANGER LE PERSONNAGE
+// ========================================
+
+function changePlayer() {
+
+    if (selectedCharacter === "ninja") {
+
+        player.textContent = "🥷";
+
+    }
+
+    if (selectedCharacter === "shadow") {
+
+        player.textContent = "👤";
+
+    }
+
+    if (selectedCharacter === "fire") {
+
+        player.textContent = "🔥";
+
+    }
+}
+
+
+// ========================================
 // SAUT
-// ==============================
+// ========================================
 
 function jump() {
 
@@ -84,187 +167,25 @@ function jump() {
         return;
     }
 
-    if (ninja.classList.contains("jumping")) {
+    if (player.classList.contains("jump")) {
         return;
     }
 
-    ninja.classList.remove("running");
-
-    ninja.classList.add("jumping");
+    player.classList.add("jump");
 
     setTimeout(() => {
 
-        ninja.classList.remove("jumping");
-
-        if (playing) {
-            ninja.classList.add("running");
-        }
+        player.classList.remove("jump");
 
     }, 650);
 }
 
 
-// ==============================
-// BOUCLE PRINCIPALE
-// ==============================
-
-function gameLoop(time) {
-
-    if (!playing) {
-        return;
-    }
-
-    const delta = time - lastTime;
-
-    lastTime = time;
-
-    obstacleTimer += delta;
-
-    // Faire apparaître un nouvel obstacle
-    if (obstacleTimer >= nextObstacle) {
-
-        obstacleTimer = 0;
-
-        nextObstacle = random(900, 1700);
-
-        obstacleX = game.clientWidth + 80;
-    }
-
-    // Déplacement
-    obstacleX -= speed * (delta / 16.67);
-
-    obstacle.style.left = obstacleX + "px";
-
-
-    // Score
-    score += delta * 0.01;
-
-    const displayedScore = Math.floor(score);
-
-    scoreElement.textContent = displayedScore;
-
-
-    // Difficulté
-    speed = 7 + displayedScore * 0.025;
-
-    if (speed > 14) {
-        speed = 14;
-    }
-
-
-    // Collision
-    if (checkCollision()) {
-
-        gameOver();
-
-        return;
-    }
-
-
-    requestAnimationFrame(gameLoop);
-}
-
-
-// ==============================
-// COLLISION
-// ==============================
-
-function checkCollision() {
-
-    const ninjaRect = ninja.getBoundingClientRect();
-
-    const obstacleRect = obstacle.getBoundingClientRect();
-
-    // Petite marge pour rendre le jeu plus agréable
-    const margin = 12;
-
-    return (
-
-        ninjaRect.right - margin > obstacleRect.left &&
-
-        ninjaRect.left + margin < obstacleRect.right &&
-
-        ninjaRect.bottom - margin > obstacleRect.top &&
-
-        ninjaRect.top + margin < obstacleRect.bottom
-
-    );
-}
-
-
-// ==============================
-// GAME OVER
-// ==============================
-
-function gameOver() {
-
-    playing = false;
-
-    ninja.classList.remove("running");
-    ninja.classList.remove("jumping");
-
-    const currentScore = Math.floor(score);
-
-    finalScore.textContent = currentScore;
-
-
-    // Nouveau record
-    if (currentScore > best) {
-
-        best = currentScore;
-
-        localStorage.setItem("ninjaBest", best);
-
-        bestElement.textContent = best;
-    }
-
-
-    gameOverScreen.classList.remove("hidden");
-}
-
-
-// ==============================
-// RECOMMENCER
-// ==============================
-
-function restartGame() {
-
-    startGame();
-}
-
-
-// ==============================
-// BOUTONS
-// ==============================
-
-startButton.addEventListener("click", startGame);
-
-restartButton.addEventListener("click", restartGame);
-
-
-// ==============================
-// TELEPHONE
-// ==============================
-
-// Toucher le bouton
-jumpButton.addEventListener(
-    "touchstart",
-    function(event) {
-
-        event.preventDefault();
-
-        jump();
-
-    },
-    {
-        passive: false
-    }
-);
-
-
-// Empêche certains navigateurs de déclencher
-// un clic supplémentaire
-jumpButton.addEventListener("click", function(event) {
+// ========================================
+// BOUTON SAUT
+// ========================================
+
+jumpButton.addEventListener("pointerdown", function(event) {
 
     event.preventDefault();
 
@@ -273,9 +194,9 @@ jumpButton.addEventListener("click", function(event) {
 });
 
 
-// ==============================
-// CLAVIER PC
-// ==============================
+// ========================================
+// CLAVIER
+// ========================================
 
 document.addEventListener("keydown", function(event) {
 
@@ -292,41 +213,171 @@ document.addEventListener("keydown", function(event) {
 });
 
 
-// ==============================
-// TOUCHER L'ÉCRAN
-// ==============================
+// ========================================
+// BOUCLE DU JEU
+// ========================================
 
-// Permet aussi de sauter en touchant
-// une partie vide de l'écran.
-game.addEventListener(
-    "touchstart",
+function gameLoop(time) {
+
+    if (!playing) {
+        return;
+    }
+
+    const delta = time - lastTime;
+
+    lastTime = time;
+
+    obstacleTimer += delta;
+
+
+    // Déplacer obstacle
+
+    obstaclePosition -=
+        speed * (delta / 16.67);
+
+    obstacle.style.left =
+        obstaclePosition + "px";
+
+
+    // Obstacle sorti de l'écran
+
+    if (obstaclePosition < -100) {
+
+        obstaclePosition =
+            window.innerWidth +
+            Math.random() * 400;
+
+        obstacleTimer = 0;
+
+        nextObstacle =
+            700 + Math.random() * 1000;
+
+    }
+
+
+    // Score
+
+    score += delta * 0.01;
+
+    const currentScore =
+        Math.floor(score);
+
+    scoreText.textContent =
+        currentScore;
+
+
+    // Augmenter difficulté
+
+    speed =
+        Math.min(
+            15,
+            7 + currentScore * 0.02
+        );
+
+
+    // Collision
+
+    if (collision()) {
+
+        endGame();
+
+        return;
+    }
+
+
+    requestAnimationFrame(gameLoop);
+}
+
+
+// ========================================
+// COLLISION
+// ========================================
+
+function collision() {
+
+    const p =
+        player.getBoundingClientRect();
+
+    const o =
+        obstacle.getBoundingClientRect();
+
+    const marge = 15;
+
+    return (
+        p.right - marge > o.left &&
+        p.left + marge < o.right &&
+        p.bottom - marge > o.top &&
+        p.top + marge < o.bottom
+    );
+}
+
+
+// ========================================
+// GAME OVER
+// ========================================
+
+function endGame() {
+
+    playing = false;
+
+    const currentScore =
+        Math.floor(score);
+
+    finalScore.textContent =
+        currentScore;
+
+
+    if (currentScore > best) {
+
+        best = currentScore;
+
+        localStorage.setItem(
+            "jadenBest",
+            best
+        );
+
+        bestText.textContent =
+            best;
+    }
+
+
+    gameOver.classList.remove("hidden");
+}
+
+
+// ========================================
+// REJOUER
+// ========================================
+
+retryButton.addEventListener(
+    "pointerdown",
     function(event) {
 
-        if (!playing) {
-            return;
-        }
+        event.preventDefault();
 
-        if (event.target === jumpButton) {
-            return;
-        }
+        startGame();
 
-        jump();
-
-    },
-    {
-        passive: true
     }
 );
 
 
-// ==============================
-// OUTILS
-// ==============================
+// ========================================
+// RETOUR MENU
+// ========================================
 
-function random(min, max) {
+menuButton.addEventListener(
+    "pointerdown",
+    function(event) {
 
-    return Math.floor(
-        Math.random() * (max - min + 1)
-    ) + min;
+        event.preventDefault();
 
-}
+        playing = false;
+
+        game.classList.add("hidden");
+
+        gameOver.classList.add("hidden");
+
+        menu.classList.remove("hidden");
+
+    }
+);

@@ -1,311 +1,42 @@
-/* =========================
-   BASE
-========================= */
-
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
     width: 100%;
-    min-height: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
-    background: #111827;
-    color: white;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    overflow-x: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #080808;
+    touch-action: manipulation;
 }
-
-
-/* =========================
-   MENU
-========================= */
-
-#menu {
-    width: 100%;
-    max-width: 650px;
-
-    margin: auto;
-
-    padding: 45px 20px;
-
-    text-align: center;
-}
-
-
-.logo {
-    margin-bottom: 8px;
-}
-
-.logo span {
-    display: block;
-
-    font-size: 38px;
-    font-weight: 900;
-
-    letter-spacing: 2px;
-
-    color: #ffd447;
-}
-
-.logo small {
-    font-size: 16px;
-    font-weight: bold;
-
-    letter-spacing: 5px;
-
-    color: #ffffff;
-}
-
-
-.subtitle {
-    margin-top: 25px;
-    margin-bottom: 20px;
-
-    color: #aeb7c7;
-}
-
-
-/* =========================
-   SKINS
-========================= */
-
-.skins {
-    display: flex;
-
-    gap: 12px;
-
-    width: 100%;
-
-    margin-bottom: 25px;
-}
-
-
-.skin {
-    flex: 1;
-
-    min-width: 0;
-
-    height: 145px;
-
-    border: 2px solid #354157;
-
-    border-radius: 16px;
-
-    background: #202938;
-
-    color: white;
-
-    cursor: pointer;
-}
-
-
-.skin.selected {
-    border-color: #ffd447;
-
-    background: #2c374a;
-
-    transform: translateY(-3px);
-}
-
-
-.skin strong {
-    display: block;
-
-    margin-top: 10px;
-
-    font-size: 13px;
-}
-
-
-/* =========================
-   PERSONNAGES DU MENU
-========================= */
-
-.skin-preview {
-    position: relative;
-
-    width: 55px;
-    height: 70px;
-
-    margin: auto;
-}
-
-
-.skin-preview .ninja-head {
-    position: absolute;
-
-    left: 12px;
-    top: 0;
-
-    width: 31px;
-    height: 31px;
-
-    border-radius: 50%;
-
-    background: #d69a70;
-
-    border: 3px solid #151923;
-}
-
-
-.skin-preview .ninja-body {
-    position: absolute;
-
-    left: 10px;
-    top: 27px;
-
-    width: 35px;
-    height: 35px;
-
-    border-radius: 8px;
-
-    background: #28365d;
-}
-
-
-.skin-preview .ninja-leg {
-    position: absolute;
-
-    top: 56px;
-
-    width: 11px;
-    height: 17px;
-
-    background: #171c2d;
-
-    border-radius: 5px;
-}
-
-
-.skin-preview .ninja-leg.left {
-    left: 12px;
-}
-
-
-.skin-preview .ninja-leg.right {
-    right: 10px;
-}
-
-
-/* Shadow */
-
-.shadow-preview .ninja-body {
-    background: #181c29;
-}
-
-.shadow-preview .ninja-head {
-    background: #777b88;
-}
-
-
-/* Fire */
-
-.fire-preview .ninja-body {
-    background: #bd452d;
-}
-
-.fire-preview .ninja-head {
-    background: #d79a6c;
-}
-
-
-/* =========================
-   BOUTON JOUER
-========================= */
-
-#startButton {
-    width: 100%;
-    height: 58px;
-
-    border: none;
-
-    border-radius: 14px;
-
-    background: #ffd447;
-
-    color: #111;
-
-    font-size: 20px;
-
-    font-weight: 900;
-
-    cursor: pointer;
-}
-
-#startButton:active {
-    transform: scale(.98);
-}
-
 
 /* =========================
    JEU
 ========================= */
 
-#game {
-    display: none;
-
-    width: 100%;
-    max-width: 950px;
-
-    margin: auto;
-
-    padding: 10px;
-}
-
-
-/* =========================
-   HUD
-========================= */
-
-#hud {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    height: 42px;
-
-    padding: 0 6px;
-
-    font-size: 17px;
-
-    font-weight: bold;
-}
-
-
-/* =========================
-   ZONE DE JEU
-========================= */
-
-#gameArea {
+.game {
     position: relative;
 
-    width: 100%;
-
-    height: 390px;
+    width: 100vw;
+    height: 100vh;
 
     overflow: hidden;
 
-    border-radius: 16px;
-
-    background: #8bd7ff;
-
-    touch-action: none;
+    background:
+        linear-gradient(
+            to bottom,
+            #101b3d 0%,
+            #243c68 55%,
+            #60748d 100%
+        );
 }
-
 
 /* =========================
    CIEL
@@ -313,33 +44,39 @@ body {
 
 .sky {
     position: absolute;
-
     inset: 0;
 
-    background:
-        linear-gradient(
-            to bottom,
-            #72cfff 0%,
-            #b9eaff 62%,
-            #7bbb50 62%,
-            #7bbb50 100%
-        );
+    overflow: hidden;
 }
 
+.moon {
+    position: absolute;
+
+    width: 80px;
+    height: 80px;
+
+    right: 12%;
+    top: 10%;
+
+    border-radius: 50%;
+
+    background: #fff4bd;
+
+    box-shadow:
+        0 0 30px #fff4bd,
+        0 0 70px rgba(255, 244, 189, .35);
+}
 
 .cloud {
     position: absolute;
 
-    width: 85px;
-    height: 25px;
+    width: 120px;
+    height: 35px;
 
-    border-radius: 30px;
+    border-radius: 50px;
 
-    background: white;
-
-    opacity: .8;
+    background: rgba(255, 255, 255, .12);
 }
-
 
 .cloud::before,
 .cloud::after {
@@ -347,624 +84,389 @@ body {
 
     position: absolute;
 
-    background: white;
+    background: inherit;
 
     border-radius: 50%;
 }
 
-
 .cloud::before {
-    width: 35px;
-    height: 35px;
+    width: 55px;
+    height: 55px;
 
-    left: 14px;
-    top: -18px;
+    left: 20px;
+    bottom: 0;
 }
-
 
 .cloud::after {
-    width: 28px;
-    height: 28px;
+    width: 70px;
+    height: 70px;
 
-    right: 12px;
-    top: -12px;
+    right: 15px;
+    bottom: 0;
 }
 
-
 .cloud1 {
-    left: 10%;
-    top: 45px;
+    top: 25%;
+    left: -30px;
 }
 
 .cloud2 {
-    left: 52%;
-    top: 80px;
+    top: 40%;
+    right: -50px;
 }
-
-.cloud3 {
-    left: 80%;
-    top: 35px;
-}
-
 
 /* =========================
-   MONTAGNES
+   INTERFACE
 ========================= */
 
-.mountain {
+.top-ui {
     position: absolute;
 
-    bottom: 37%;
+    top: 20px;
+    left: 20px;
+    right: 20px;
 
-    width: 0;
-    height: 0;
+    display: flex;
+    justify-content: space-between;
 
-    border-left: 100px solid transparent;
-    border-right: 100px solid transparent;
+    color: white;
 
-    border-bottom: 130px solid #6cae76;
+    font-size: 13px;
+    font-weight: bold;
 
-    opacity: .65;
+    z-index: 20;
 }
 
-
-.mountain1 {
-    left: 15%;
+.top-ui div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
 
-
-.mountain2 {
-    left: 55%;
+.top-ui strong {
+    font-size: 25px;
 }
-
 
 /* =========================
-   MONDE
+   NINJA
 ========================= */
 
-#world {
+.ninja {
     position: absolute;
 
-    left: 0;
-    top: 0;
+    left: 14%;
 
-    width: 5000px;
-    height: 100%;
+    bottom: 85px;
 
-    will-change: transform;
+    width: 70px;
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 58px;
+
+    z-index: 10;
+
+    transform-origin: bottom center;
 }
 
+/* Animation de course */
 
-/* =========================
-   SOL
-========================= */
-
-#ground {
-    position: absolute;
-
-    left: 0;
-    bottom: 0;
-
-    width: 5000px;
-
-    height: 37%;
-
-    background: #62a948;
-
-    border-top: 8px solid #477d37;
+.ninja.running {
+    animation: runAnimation .18s infinite alternate;
 }
 
+@keyframes runAnimation {
 
-/* =========================
-   PLATEFORMES
-========================= */
+    from {
+        transform: translateY(0) rotate(-2deg);
+    }
 
-.platform {
-    position: absolute;
-
-    width: 115px;
-    height: 17px;
-
-    background: #8b5a35;
-
-    border-top: 5px solid #b27947;
-
-    border-radius: 5px;
+    to {
+        transform: translateY(-4px) rotate(2deg);
+    }
 }
 
+/* Saut */
+
+.ninja.jumping {
+    animation: jumpAnimation .65s ease-out;
+}
+
+@keyframes jumpAnimation {
+
+    0% {
+        bottom: 85px;
+        transform: rotate(0);
+    }
+
+    45% {
+        bottom: 250px;
+        transform: rotate(-10deg);
+    }
+
+    100% {
+        bottom: 85px;
+        transform: rotate(0);
+    }
+}
 
 /* =========================
-   OBSTACLES
+   OBSTACLE
 ========================= */
 
 .obstacle {
     position: absolute;
 
-    bottom: 37%;
+    left: 100%;
 
-    width: 43px;
-    height: 43px;
+    bottom: 85px;
 
-    border-radius: 9px;
-
-    background: #65554b;
-
-    border-bottom: 7px solid #42372f;
-}
-
-
-.obstacle::before {
-    content: "";
-
-    position: absolute;
-
-    width: 13px;
-    height: 7px;
-
-    background: #817067;
-
-    border-radius: 50%;
-
-    left: 7px;
-    top: 8px;
-}
-
-
-/* =========================
-   ENNEMIS
-========================= */
-
-.enemy {
-    position: absolute;
-
-    bottom: 37%;
-
-    width: 46px;
-    height: 38px;
+    width: 65px;
+    height: 65px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
-    background: #713e80;
+    font-size: 50px;
 
-    border-radius: 20px 20px 8px 8px;
-
-    border-bottom: 5px solid #482750;
-
-    font-size: 21px;
+    z-index: 9;
 }
 
-
 /* =========================
-   PIÈCES
+   SOL
 ========================= */
 
-.coin {
+.ground {
     position: absolute;
 
-    width: 23px;
-    height: 23px;
+    left: 0;
+    bottom: 0;
 
-    border-radius: 50%;
+    width: 100%;
+    height: 85px;
 
-    background: #ffd447;
+    background:
+        repeating-linear-gradient(
+            135deg,
+            #161616 0,
+            #161616 25px,
+            #202020 25px,
+            #202020 50px
+        );
 
-    border: 3px solid #d69d18;
+    border-top: 5px solid #e5a52a;
+
+    z-index: 8;
+}
+
+/* =========================
+   BOUTON
+========================= */
+
+.controls {
+    position: absolute;
+
+    right: 20px;
+    bottom: 105px;
+
+    z-index: 30;
+}
+
+#jumpButton {
+    width: 125px;
+    height: 70px;
+
+    border: 3px solid white;
+    border-radius: 40px;
+
+    background: rgba(255, 170, 0, .85);
+
+    color: #111;
+
+    font-size: 17px;
+    font-weight: 900;
 
     box-shadow:
-        inset 0 0 0 3px #ffe990;
-}
-
-
-/* =========================
-   ARRIVÉE
-========================= */
-
-#finish {
-    position: absolute;
-
-    left: 4300px;
-
-    bottom: 37%;
-
-    width: 8px;
-    height: 115px;
-
-    background: #4d4238;
-}
-
-
-.flag {
-    position: absolute;
-
-    left: 7px;
-    top: 5px;
-
-    width: 48px;
-    height: 30px;
-
-    background: #ed5b5b;
-
-    clip-path:
-        polygon(
-            0 0,
-            100% 0,
-            78% 100%,
-            0 100%
-        );
-}
-
-
-/* =========================
-   JOUEUR
-========================= */
-
-#player {
-    position: absolute;
-
-    left: 110px;
-
-    bottom: 37%;
-
-    width: 55px;
-    height: 72px;
-
-    z-index: 20;
-
-    will-change: bottom;
-}
-
-
-.player-head {
-    position: absolute;
-
-    left: 12px;
-    top: 0;
-
-    width: 31px;
-    height: 31px;
-
-    background: #d69a70;
-
-    border: 3px solid #171b27;
-
-    border-radius: 50%;
-
-    z-index: 3;
-}
-
-
-.player-head::before {
-    content: "";
-
-    position: absolute;
-
-    left: -2px;
-    top: -4px;
-
-    width: 29px;
-    height: 10px;
-
-    background: #1b1f2e;
-
-    border-radius: 12px;
-}
-
-
-.eye {
-    position: absolute;
-
-    top: 13px;
-
-    width: 5px;
-    height: 5px;
-
-    border-radius: 50%;
-
-    background: #151923;
-}
-
-
-.eye.left {
-    left: 7px;
-}
-
-.eye.right {
-    right: 7px;
-}
-
-
-.player-body {
-    position: absolute;
-
-    left: 10px;
-    top: 27px;
-
-    width: 35px;
-    height: 32px;
-
-    background: #28365d;
-
-    border-radius: 8px;
-}
-
-
-.player-scarf {
-    position: absolute;
-
-    left: 5px;
-    top: 30px;
-
-    width: 48px;
-    height: 7px;
-
-    background: #e24e4e;
-
-    border-radius: 5px;
-
-    z-index: 5;
-}
-
-
-.player-arm {
-    position: absolute;
-
-    top: 31px;
-
-    width: 10px;
-    height: 27px;
-
-    background: #d69a70;
-
-    border-radius: 7px;
-}
-
-
-.player-arm.left {
-    left: 0;
-
-    transform: rotate(22deg);
-}
-
-
-.player-arm.right {
-    right: 0;
-
-    transform: rotate(-22deg);
-}
-
-
-.player-leg {
-    position: absolute;
-
-    top: 55px;
-
-    width: 11px;
-    height: 20px;
-
-    background: #171c2c;
-
-    border-radius: 6px;
-}
-
-
-.player-leg.left {
-    left: 11px;
-}
-
-
-.player-leg.right {
-    right: 10px;
-}
-
-
-/* =========================
-   CONTROLES
-========================= */
-
-#controls {
-    display: flex;
-
-    justify-content: center;
-
-    gap: 12px;
-
-    margin-top: 13px;
-}
-
-
-.control {
-    width: 72px;
-    height: 56px;
-
-    border: none;
-
-    border-radius: 14px;
-
-    background: #252d3c;
-
-    color: white;
-
-    font-size: 22px;
-
-    font-weight: bold;
+        0 5px 0 #9c6200,
+        0 8px 20px rgba(0, 0, 0, .3);
+
+    user-select: none;
+    -webkit-user-select: none;
 
     touch-action: manipulation;
 }
 
+#jumpButton:active {
+    transform: translateY(5px);
 
-.control:active {
-    transform: scale(.94);
+    box-shadow:
+        0 0 0 #9c6200;
 }
-
-
-.control.jump {
-    width: 115px;
-
-    background: #ffd447;
-
-    color: #111;
-}
-
-
-.help {
-    text-align: center;
-
-    margin-top: 10px;
-
-    color: #8994a7;
-
-    font-size: 13px;
-}
-
 
 /* =========================
-   GAME OVER
+   ÉCRANS
 ========================= */
 
-#gameOver {
+.screen {
     position: absolute;
 
     inset: 0;
 
-    display: none;
-
+    display: flex;
     align-items: center;
     justify-content: center;
 
-    background: rgba(5, 8, 15, .72);
+    background: rgba(0, 0, 0, .65);
 
     z-index: 100;
 }
 
+.hidden {
+    display: none;
+}
 
-.gameOverBox {
-    width: min(90%, 330px);
+.panel {
+    width: min(90%, 400px);
 
-    padding: 28px;
-
-    border-radius: 18px;
+    padding: 35px 25px;
 
     text-align: center;
 
-    background: #202938;
+    color: white;
 
-    border: 1px solid #3a465a;
+    border-radius: 25px;
+
+    background: rgba(10, 10, 15, .92);
+
+    border: 2px solid rgba(255, 255, 255, .15);
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, .5);
 }
 
+.big-ninja {
+    font-size: 75px;
 
-.gameOverBox h2 {
     margin-bottom: 10px;
-
-    font-size: 28px;
 }
 
+h1 {
+    font-size: 48px;
 
-.gameOverBox p {
-    margin-bottom: 20px;
+    line-height: .85;
 
-    color: #b9c1ce;
+    letter-spacing: 5px;
 }
 
+h1 span {
+    color: #ffb300;
+}
 
-#restartButton,
-#menuButton {
-    width: 100%;
+h2 {
+    font-size: 40px;
 
-    height: 48px;
+    margin-bottom: 15px;
+}
 
-    border: none;
+.panel p {
+    margin: 20px 0;
 
-    border-radius: 11px;
+    color: #bbb;
 
     font-size: 16px;
+}
 
-    font-weight: bold;
+.panel button {
+    width: 80%;
+
+    padding: 17px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #ffb300;
+
+    color: #111;
+
+    font-size: 20px;
+    font-weight: 900;
 
     cursor: pointer;
 }
 
-
-#restartButton {
-    background: #ffd447;
-
-    color: #111;
-
-    margin-bottom: 9px;
+.panel button:active {
+    transform: scale(.96);
 }
 
+.panel small {
+    display: block;
 
-#menuButton {
-    background: #303b4e;
+    margin-top: 20px;
 
-    color: white;
+    color: #777;
 }
-
 
 /* =========================
-   MOBILE
+   PC
 ========================= */
 
-@media (max-width: 600px) {
+@media (min-width: 700px) {
 
-    #menu {
-        padding: 30px 15px;
+    .game {
+        width: 900px;
+        height: 550px;
+
+        margin: auto;
+
+        border-radius: 20px;
+
+        box-shadow:
+            0 20px 80px rgba(0, 0, 0, .6);
     }
 
-
-    .logo span {
-        font-size: 30px;
-    }
-
-
-    .skins {
-        gap: 7px;
-    }
-
-
-    .skin {
-        height: 125px;
-    }
-
-
-    #game {
-        padding: 7px;
-    }
-
-
-    #gameArea {
-        height: 320px;
-    }
-
-
-    .control {
-        width: 65px;
-    }
-
-
-    .control.jump {
-        width: 105px;
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
 }
 
+/* =========================
+   PETIT ÉCRAN
+========================= */
 
-@media (max-width: 360px) {
+@media (max-height: 600px) {
 
-    #gameArea {
-        height: 285px;
+    .ninja {
+        bottom: 65px;
     }
 
-
-    .control {
-        width: 58px;
+    .obstacle {
+        bottom: 65px;
     }
 
-
-    .control.jump {
-        width: 95px;
+    .ground {
+        height: 65px;
     }
 
-  }
+    .controls {
+        bottom: 80px;
+    }
+
+    .panel {
+        padding: 20px;
+    }
+
+    .big-ninja {
+        font-size: 50px;
+    }
+
+    h1 {
+        font-size: 35px;
+    }
+}
